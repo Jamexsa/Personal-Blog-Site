@@ -1,0 +1,61 @@
+---
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/700.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Social/OG image; replace the default with a branded 1200×630 asset later. */
+  image?: string;
+}
+
+const {
+  title,
+  description = 'Personal portfolio and devlog — games, art, and process.',
+  image = 'https://picsum.photos/seed/og-fallback/1200/630',
+} = Astro.props;
+
+const siteName = 'Your Name';
+const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <Header />
+    <main class="container site-main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .site-main {
+    /* Breathing room below the sticky header; fluid so it scales with viewport */
+    padding-block: var(--space-8) var(--space-12);
+    min-height: 60vh;
+  }
+</style>

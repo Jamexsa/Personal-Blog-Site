@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogList from '../../components/BlogList.astro';
+import { getSortedPosts } from '../../lib/posts';
+
+const posts = await getSortedPosts();
+---
+
+<BaseLayout title="Blog" description="Devlog — notes on game development, art studies, and process.">
+  <header class="page-header">
+    <p class="font-mono-label">Devlog</p>
+    <h1>Notes from the workshop</h1>
+    <p class="text-muted">
+      {posts.length > 0 ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} and counting.` : 'Nothing here yet.'}
+    </p>
+  </header>
+
+  <BlogList {posts} />
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-block: var(--space-4) var(--space-8);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-4xl);
+    margin-block: var(--space-2) var(--space-3);
+  }
+</style>

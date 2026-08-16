@@ -1,0 +1,215 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getSortedPosts, readingTimeMinutes } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getSortedPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      newer: posts[i - 1] ?? null, // sorted desc: index - 1 is newer
+      older: posts[i + 1] ?? null,
+    },
+  }));
+}
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+const minutes = readingTimeMinutes(post.body ?? '');
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article>
+    <header class="post-header">
+      <p class="post-meta font-mono-label">
+        <FormattedDate date={post.data.pubDate} />
+        <span aria-hidden="true">·</span>
+        <span>{minutes} min read</span>
+      </p>
+      <h1>{post.data.title}</h1>
+      {post.data.description && <p class="lede text-muted">{post.data.description}</p>}
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {(newer || older) && (
+      <nav class="post-nav" aria-label="Post navigation">
+        {newer ? (
+          <a class="post-nav-link newer" href={`/blog/${newer.id}/`}>
+            <span class="font-mono-label">Newer</span>
+            <span class="post-nav-title">{newer.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {older ? (
+          <a class="post-nav-link older" href={`/blog/${older.id}/`}>
+            <span class="font-mono-label">Older</span>
+            <span class="post-nav-title">{older.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+      </nav>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-block: var(--space-4) var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .post-meta {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+
+  .post-header h1 {
+    font-size: var(--text-3xl);
+    margin-block: var(--space-3) var(--space-4);
+    max-width: 25ch;
+  }
+
+  .lede {
+    font-size: var(--text-lg);
+    max-width: 55ch;
+  }
+
+  /* Rendered Markdown */
+  .prose {
+    max-width: 68ch;
+  }
+
+  .prose :global(h2) {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .prose :global(h3) {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-2);
+  }
+
+  .prose :global(p) {
+    margin-block: var(--space-4);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-block: var(--space-4);
+    padding-inline-start: var(--space-6);
+  }
+
+  .prose :global(li) {
+    margin-block: var(--space-1);
+  }
+
+  .prose :global(li::marker) {
+    color: var(--color-accent);
+  }
+
+  .prose :global(a) {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  .prose :global(pre) {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    overflow-x: auto;
+    margin-block: var(--space-4);
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-4);
+    margin-block: var(--space-4);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .prose :global(img) {
+    border-radius: var(--radius-md);
+    margin-block: var(--space-5);
+  }
+
+  .prose :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+    margin-block: var(--space-8);
+  }
+
+  /* Prev / next */
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .post-nav-link:hover {
+    color: inherit;
+  }
+
+  .post-nav-link .post-nav-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .post-nav-link:hover .post-nav-title {
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 48rem) {
+    .post-nav {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .post-nav-link.older {
+      text-align: right;
+      align-items: flex-end;
+    }
+  }
+</style>

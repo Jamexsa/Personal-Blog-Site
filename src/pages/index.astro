@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogList from '../components/BlogList.astro';
+import { getSortedPosts } from '../lib/posts';
+
+const posts = await getSortedPosts();
+const recent = posts.slice(0, 3);
+---
+
+<BaseLayout title="Your Name" description="Game developer and artist — portfolio, devlog, and art.">
+  <section class="hero">
+    <p class="font-mono-label">Game dev · Art · Devlog</p>
+    <h1>
+      I make <span class="accent">small games</span>
+      <span class="hero-break">and draw their worlds.</span>
+    </h1>
+    <p class="hero-tagline text-muted">
+      Placeholder tagline: independent game developer and artist working on
+      [Project Name]. This is where I document the process.
+    </p>
+  </section>
+
+  <section class="section-strip" aria-label="What I do">
+    <a class="strip-item" href="/games/">
+      <span class="font-mono-label">01</span>
+      <span class="strip-title">Games</span>
+      <span class="text-muted">Playable things and their prototypes.</span>
+    </a>
+    <a class="strip-item" href="/art/">
+      <span class="font-mono-label">02</span>
+      <span class="strip-title">Art</span>
+      <span class="text-muted">Studies, sketches, and palettes.</span>
+    </a>
+    <a class="strip-item" href="/blog/">
+      <span class="font-mono-label">03</span>
+      <span class="strip-title">Devlog</span>
+      <span class="text-muted">How it's made, week by week.</span>
+    </a>
+  </section>
+
+  <section class="recent">
+    <div class="section-header">
+      <h2>From the devlog</h2>
+      {recent.length > 0 && <a class="all-link font-mono-label" href="/blog/">All posts →</a>}
+    </div>
+    {recent.length > 0 ? (
+      <BlogList posts={recent} compact />
+    ) : (
+      <p class="text-muted">Devlog coming soon — first entry is in the works.</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .hero h1 {
+    font-size: var(--text-display);
+    margin-block: var(--space-4) var(--space-5);
+  }
+
+  .accent {
+    color: var(--color-accent);
+  }
+
+  /* Break the headline only where there's room for it */
+  .hero-break {
+    display: inline;
+  }
+
+  @media (min-width: 48rem) {
+    .hero-break {
+      display: block;
+    }
+  }
+
+  .hero-tagline {
+    font-size: var(--text-lg);
+    max-width: 50ch;
+  }
+
+  /* What-I-do strip: bold minimal sections */
+  .section-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .strip-item {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    grid-template-areas: 'num title' 'num desc';
+    gap: var(--space-1) var(--space-3);
+    padding-block: var(--space-5);
+    color: inherit;
+  }
+
+  .strip-item + .strip-item {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .strip-item .font-mono-label {
+    grid-area: num;
+  }
+
+  .strip-title {
+    grid-area: title;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+  }
+
+  .strip-item > .text-muted {
+    grid-area: desc;
+    font-size: var(--text-sm);
+  }
+
+  .strip-item:hover .strip-title {
+    color: var(--color-accent);
+  }
+
+  .recent {
+    padding-block: var(--space-12) 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-block: var(--space-4);
+  }
+
+  .section-header h2 {
+    font-size: var(--text-3xl);
+  }
+
+  .all-link {
+    color: var(--color-link);
+    white-space: nowrap;
+  }
+
+  .all-link:hover {
+    color: var(--color-link-hover);
+  }
+
+  @media (min-width: 48rem) {
+    .section-strip {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .strip-item + .strip-item {
+      border-top: 0;
+      border-left: 1px solid var(--color-line);
+    }
+
+    .strip-item {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'num' 'title' 'desc';
+      padding: var(--space-6) var(--space-5) var(--space-6) 0;
+    }
+
+    .strip-item + .strip-item {
+      padding-left: var(--space-5);
+    }
+  }
+</style>

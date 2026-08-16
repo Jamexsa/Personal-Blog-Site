@@ -1,0 +1,196 @@
+/* ============================================================
+   Design tokens — single source of truth for the whole site.
+   Light theme is the default on :root; dark palette is defined
+   under [data-theme="dark"] so a future toggle only flips that
+   attribute. Pages/components should only use semantic tokens,
+   never raw hex values.
+   ============================================================ */
+
+:root {
+  /* Color — palette (light) */
+  --color-bg: #fafaf8;            /* warm off-white page background */
+  --color-surface: #ffffff;       /* cards, panels */
+  --color-ink: #16161a;           /* primary text */
+  --color-muted: #6e6e76;         /* dates, metadata, secondary text */
+  --color-line: #e7e5e0;          /* hairline borders */
+
+  /* Color — accent (electric coral, shared with dark theme) */
+  --color-accent: #ff4d3d;
+  --color-accent-strong: #e63526; /* hover / pressed */
+  --color-accent-soft: #ffe9e6;   /* tint backgrounds, tags */
+
+  /* Color — semantic aliases */
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-muted);
+  --color-link: var(--color-accent-strong);
+  --color-link-hover: var(--color-ink);
+  --color-selection-bg: var(--color-accent);
+  --color-selection-text: #ffffff;
+
+  /* Typography */
+  --font-heading: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem);
+  --text-4xl: clamp(2rem, 1.5rem + 2.25vw, 2.75rem);
+  --text-display: clamp(2.5rem, 1.75rem + 3.5vw, 4rem);
+
+  --tracking-tight: -0.02em;
+  --tracking-mono-label: 0.08em;
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-12: 4.5rem;
+  --space-16: 6rem;
+
+  /* Layout */
+  --container-max: 72rem;
+  --container-pad: clamp(1rem, 0.5rem + 2vw, 2rem);
+  --header-height: 3.75rem;
+
+  /* Radii & shadow */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --shadow-md: 0 4px 16px rgb(22 22 26 / 0.08);
+
+  /* Breakpoints — reference tokens for docs/JS; CSS uses media queries below */
+  --bp-sm: 40rem;   /* ~640px  — large phones */
+  --bp-md: 48rem;   /* ~768px  — tablet: desktop nav appears */
+  --bp-lg: 64rem;   /* ~1024px — desktop */
+  --bp-xl: 80rem;   /* ~1280px — wide desktop */
+}
+
+[data-theme="dark"] {
+  --color-bg: #101014;
+  --color-surface: #18181d;
+  --color-ink: #f2f2f0;
+  --color-muted: #9a9aa3;
+  --color-line: #2a2a31;
+
+  --color-accent-soft: #3a1e1b;
+
+  --color-link-hover: #f2f2f0;
+  --color-selection-text: #16161a;
+
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.4);
+}
+
+/* ============================================================
+   Reset / base
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text);
+}
+
+h1 { font-size: var(--text-display); }
+h2 { font-size: var(--text-4xl); }
+h3 { font-size: var(--text-3xl); }
+h4 { font-size: var(--text-xl); }
+
+p {
+  max-width: 70ch;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+::selection {
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.font-mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-mono-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

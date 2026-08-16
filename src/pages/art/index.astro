@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getCollection } from 'astro:content';
+
+const pieces = (await getCollection('art')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="Art" description="Illustrations, studies, and sketches — environments, characters, and palette experiments.">
+  <header class="page-header">
+    <p class="font-mono-label">Gallery</p>
+    <h1>Art &amp; studies</h1>
+    <p class="text-muted">
+      {pieces.length > 0 ? `${pieces.length} ${pieces.length === 1 ? 'piece' : 'pieces'}, newest first.` : 'Nothing here yet.'}
+    </p>
+  </header>
+
+  {pieces.length === 0 ? (
+    <p class="text-muted">The gallery is empty for now — new work is on the easel.</p>
+  ) : (
+    <div class="gallery">
+      {pieces.map(({ data }) => (
+        <figure class="gallery-item">
+          <img
+            src={data.image}
+            alt={data.description ?? data.title}
+            width="600"
+            height="800"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            <span class="piece-title">{data.title}</span>
+            <span class="piece-meta">
+              <FormattedDate date={data.date} />
+              {data.tags.length > 0 && <span> · {data.tags.join(' / ')}</span>}
+            </span>
+            {data.description && <span class="piece-desc text-muted">{data.description}</span>}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-block: var(--space-4) var(--space-8);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-4xl);
+    margin-block: var(--space-2) var(--space-3);
+  }
+
+  /* CSS-columns masonry — zero JS, degrades to 1 column on mobile */
+  .gallery {
+    columns: 1;
+    column-gap: var(--space-5);
+  }
+
+  .gallery-item {
+    break-inside: avoid;
+    margin: 0 0 var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+    transition: box-shadow 150ms ease;
+  }
+
+  .gallery-item:hover img {
+    box-shadow: var(--shadow-md);
+  }
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .piece-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-text);
+    transition: color 120ms ease;
+  }
+
+  .gallery-item:hover .piece-title {
+    color: var(--color-accent);
+  }
+
+  .piece-meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-mono-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .piece-desc {
+    font-size: var(--text-sm);
+  }
+
+  @media (min-width: 40rem) {
+    .gallery {
+      columns: 2;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .gallery {
+      columns: 3;
+    }
+  }
+</style>
