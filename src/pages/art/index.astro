@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { getCollection } from 'astro:content';
 
@@ -8,118 +9,119 @@ const pieces = (await getCollection('art')).sort(
 );
 ---
 
-<BaseLayout title="Art" description="Illustrations, studies, and sketches — environments, characters, and palette experiments.">
-  <header class="page-header">
-    <p class="font-mono-label">Gallery</p>
-    <h1>Art &amp; studies</h1>
-    <p class="text-muted">
-      {pieces.length > 0 ? `${pieces.length} ${pieces.length === 1 ? 'piece' : 'pieces'}, newest first.` : 'Nothing here yet.'}
-    </p>
-  </header>
+<BaseLayout title="Art" description="The Jester's Gallery — illustrations, studies, and sketches of the realm.">
+  <Window title="The Jester's Gallery — art & studies" icon="jester" x={230} y={16} width={760} class="gallery">
+    <header class="gallery-header">
+      <h1>Gallery</h1>
+      <p class="ui-label">
+        {pieces.length > 0
+          ? `${pieces.length} ${pieces.length === 1 ? 'piece' : 'pieces'} hung, newest first.`
+          : 'the walls are bare — new work is on the easel.'}
+      </p>
+    </header>
+    <hr class="scroll-divider" />
 
-  {pieces.length === 0 ? (
-    <p class="text-muted">The gallery is empty for now — new work is on the easel.</p>
-  ) : (
-    <div class="gallery">
-      {pieces.map(({ data }) => (
-        <figure class="gallery-item">
-          <img
-            src={data.image}
-            alt={data.description ?? data.title}
-            width="600"
-            height="800"
-            loading="lazy"
-            decoding="async"
-          />
-          <figcaption>
-            <span class="piece-title">{data.title}</span>
-            <span class="piece-meta">
-              <FormattedDate date={data.date} />
-              {data.tags.length > 0 && <span> · {data.tags.join(' / ')}</span>}
-            </span>
-            {data.description && <span class="piece-desc text-muted">{data.description}</span>}
-          </figcaption>
-        </figure>
-      ))}
-    </div>
-  )}
+    {pieces.length === 0 ? (
+      <p>The gallery stands empty — the jester is painting as we speak.</p>
+    ) : (
+      <div class="walls">
+        {pieces.map(({ data }) => (
+          <figure class="framed">
+            <img
+              src={data.image.replace(/\/600\/\d+$/, '/300/375')}
+              alt={data.description ?? data.title}
+              width="300"
+              height="375"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>
+              <span class="piece-title">{data.title}</span>
+              <span class="piece-meta">
+                <FormattedDate date={data.date} />
+                {data.tags.length > 0 && <span> · {data.tags.join(' / ')}</span>}
+              </span>
+              {data.description && <span class="piece-desc">{data.description}</span>}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    )}
+  </Window>
 </BaseLayout>
 
 <style>
-  .page-header {
-    margin-block: var(--space-4) var(--space-8);
-  }
-
-  .page-header h1 {
+  .gallery-header h1 {
     font-size: var(--text-4xl);
-    margin-block: var(--space-2) var(--space-3);
   }
 
-  /* CSS-columns masonry — zero JS, degrades to 1 column on mobile */
-  .gallery {
+  /* masonry walls */
+  .walls {
     columns: 1;
-    column-gap: var(--space-5);
+    column-gap: 1.2rem;
   }
 
-  .gallery-item {
+  .framed {
     break-inside: avoid;
-    margin: 0 0 var(--space-5);
+    margin: 0 0 1.2rem;
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: 0.5rem;
   }
 
-  .gallery-item img {
+  .framed img {
     width: 100%;
     height: auto;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-line);
-    transition: box-shadow 150ms ease;
+    border: 3px solid var(--gold);
+    outline: 2px solid var(--ink);
+    box-shadow: 4px 4px 0 rgb(0 0 0 / 0.35);
+    image-rendering: pixelated;
+    transition: transform 120ms steps(2, end);
   }
 
-  .gallery-item:hover img {
-    box-shadow: var(--shadow-md);
+  .framed:hover img {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 rgb(0 0 0 / 0.35);
   }
 
   figcaption {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
-    font-size: var(--text-sm);
+    gap: 0.15rem;
+    background: var(--parchment-aged);
+    border: 2px solid var(--ink);
+    box-shadow: inset 1px 1px 0 var(--bevel-dark);
+    padding: 0.35rem 0.6rem;
   }
 
   .piece-title {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    color: var(--color-text);
-    transition: color 120ms ease;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--ink);
   }
 
-  .gallery-item:hover .piece-title {
-    color: var(--color-accent);
+  .framed:hover .piece-title {
+    color: var(--ember-deep);
   }
 
   .piece-meta {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: var(--tracking-mono-label);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
   }
 
   .piece-desc {
-    font-size: var(--text-sm);
+    font-size: 1rem;
+    color: var(--ink-soft);
   }
 
   @media (min-width: 40rem) {
-    .gallery {
-      columns: 2;
-    }
+    .walls { columns: 2; }
   }
 
   @media (min-width: 64rem) {
-    .gallery {
-      columns: 3;
-    }
+    .walls { columns: 3; }
   }
 </style>

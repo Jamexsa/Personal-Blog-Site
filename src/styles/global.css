@@ -1,93 +1,61 @@
 /* ============================================================
-   Design tokens — single source of truth for the whole site.
-   Light theme is the default on :root; dark palette is defined
-   under [data-theme="dark"] so a future toggle only flips that
-   attribute. Pages/components should only use semantic tokens,
-   never raw hex values.
+   KingdomOS design tokens — medieval-fantasy, PSX-era.
+   Night desktop, parchment windows, gold trim, ember accents.
    ============================================================ */
 
 :root {
-  /* Color — palette (light) */
-  --color-bg: #fafaf8;            /* warm off-white page background */
-  --color-surface: #ffffff;       /* cards, panels */
-  --color-ink: #16161a;           /* primary text */
-  --color-muted: #6e6e76;         /* dates, metadata, secondary text */
-  --color-line: #e7e5e0;          /* hairline borders */
+  /* Color — the kingdom */
+  --night: #141021;            /* desktop sky (top) */
+  --night-deep: #0d0a16;       /* desktop sky (bottom), silhouettes */
+  --indigo: #1d1733;           /* title bars, stone panels' parent */
+  --parchment: #e9d8a6;        /* window bodies */
+  --parchment-aged: #d4bd85;   /* inset panels, plaques */
+  --parchment-shade: #c3ab79;  /* bevel shadow side */
+  --ink: #2a2118;              /* text on parchment */
+  --ink-soft: #574733;         /* secondary text on parchment */
+  --stone: #4a4458;            /* secondary panels (stone variant) */
+  --stone-dark: #37324a;
+  --stone-edge: #5c5570;
+  --gold: #c9a227;             /* trims, active states */
+  --gold-bright: #e8c558;
+  --ember: #ff5a36;            /* highlights, NEW tags, links on parchment */
+  --ember-deep: #c23a1e;
+  --magic: #7fe07f;            /* LCD / live-data text */
+  --moon: #f4ead0;
 
-  /* Color — accent (electric coral, shared with dark theme) */
-  --color-accent: #ff4d3d;
-  --color-accent-strong: #e63526; /* hover / pressed */
-  --color-accent-soft: #ffe9e6;   /* tint backgrounds, tags */
-
-  /* Color — semantic aliases */
-  --color-text: var(--color-ink);
-  --color-text-muted: var(--color-muted);
-  --color-link: var(--color-accent-strong);
-  --color-link-hover: var(--color-ink);
-  --color-selection-bg: var(--color-accent);
-  --color-selection-text: #ffffff;
+  /* semantic */
+  --color-bg: var(--night);
+  --win-bg: var(--parchment);
+  --win-text: var(--ink);
+  --link: var(--ember-deep);
+  --link-hover: var(--ink);
+  --selection-bg: var(--gold);
+  --selection-text: var(--ink);
 
   /* Typography */
-  --font-heading: 'Space Grotesk', 'Segoe UI', sans-serif;
-  --font-body: 'Inter', 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --font-display: 'Jacquard 12', 'Comic Sans MS', cursive;
+  --font-body: 'VT323', 'Courier New', monospace;
+  --font-ui: 'Pixelify Sans', 'VT323', monospace;
 
-  /* Type scale */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem);
-  --text-4xl: clamp(2rem, 1.5rem + 2.25vw, 2.75rem);
-  --text-display: clamp(2.5rem, 1.75rem + 3.5vw, 4rem);
-
-  --tracking-tight: -0.02em;
-  --tracking-mono-label: 0.08em;
-
-  /* Spacing (4px base) */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-8: 3rem;
-  --space-12: 4.5rem;
-  --space-16: 6rem;
+  /* VT323 runs small — keep body type generous */
+  --text-xs: 0.8rem;
+  --text-sm: 1rem;
+  --text-base: 1.25rem;
+  --text-lg: 1.45rem;
+  --text-xl: 1.7rem;
+  --text-2xl: 2.1rem;
+  --text-3xl: 2.6rem;
+  --text-4xl: 3.2rem;
+  --text-display: clamp(3rem, 2.2rem + 3vw, 4.4rem);
 
   /* Layout */
-  --container-max: 72rem;
-  --container-pad: clamp(1rem, 0.5rem + 2vw, 2rem);
-  --header-height: 3.75rem;
+  --desktop-pad: 1rem;
+  --win-chrome: 26px;          /* title bar height */
+  --statusbar-h: 34px;
 
-  /* Radii & shadow */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --shadow-md: 0 4px 16px rgb(22 22 26 / 0.08);
-
-  /* Breakpoints — reference tokens for docs/JS; CSS uses media queries below */
-  --bp-sm: 40rem;   /* ~640px  — large phones */
-  --bp-md: 48rem;   /* ~768px  — tablet: desktop nav appears */
-  --bp-lg: 64rem;   /* ~1024px — desktop */
-  --bp-xl: 80rem;   /* ~1280px — wide desktop */
-}
-
-[data-theme="dark"] {
-  --color-bg: #101014;
-  --color-surface: #18181d;
-  --color-ink: #f2f2f0;
-  --color-muted: #9a9aa3;
-  --color-line: #2a2a31;
-
-  --color-accent-soft: #3a1e1b;
-
-  --color-link-hover: #f2f2f0;
-  --color-selection-text: #16161a;
-
-  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.4);
+  /* Effects */
+  --bevel-light: rgba(255, 250, 230, 0.55);
+  --bevel-dark: rgba(42, 33, 24, 0.45);
 }
 
 /* ============================================================
@@ -102,33 +70,31 @@
 }
 
 html {
-  color-scheme: light;
-}
-
-[data-theme="dark"] {
   color-scheme: dark;
 }
 
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);
-  line-height: 1.7;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  -webkit-font-smoothing: antialiased;
+  line-height: 1.45;
+  color: var(--win-text);
+  background: linear-gradient(to bottom, var(--night) 0%, var(--night-deep) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-text);
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ink);
 }
 
-h1 { font-size: var(--text-display); }
-h2 { font-size: var(--text-4xl); }
-h3 { font-size: var(--text-3xl); }
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
 h4 { font-size: var(--text-xl); }
 
 p {
@@ -136,51 +102,260 @@ p {
 }
 
 a {
-  color: var(--color-link);
-  text-decoration: none;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 a:hover {
-  color: var(--color-link-hover);
+  color: var(--link-hover);
 }
 
 img {
   max-width: 100%;
-  height: auto;
-  display: block;
 }
 
 ::selection {
-  background-color: var(--color-selection-bg);
-  color: var(--color-selection-text);
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 3px dashed var(--ember);
   outline-offset: 2px;
 }
 
 /* ============================================================
-   Utilities
+   PSX CRT overlay — subtle scanlines over everything
    ============================================================ */
 
-.container {
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 2px,
+    rgb(0 0 0 / 0.10) 2px 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* soft vignette for that curved-tube feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 62%, rgb(0 0 0 / 0.28) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   Desktop & windows
+   ============================================================ */
+
+.desktop {
+  position: relative;
+  min-height: 100vh;
+  /* clear the fixed crier ticker + status bar at the bottom */
+  padding-bottom: calc(var(--statusbar-h) + 5rem);
+}
+
+/* window area: absolute desktop metaphor on wide screens,
+   stacked scroll below 1024px */
+.desktop-windows {
+  position: relative;
+}
+
+@media (min-width: 64rem) {
+  .desktop-windows {
+    min-height: calc(100vh - var(--statusbar-h));
+  }
+}
+
+.win {
+  background: var(--win-bg);
+  border: 2px solid var(--ink);
+  box-shadow:
+    inset 2px 2px 0 var(--bevel-light),
+    inset -2px -2px 0 var(--bevel-dark),
+    4px 4px 0 rgb(0 0 0 / 0.45);
+  margin-block: 1rem;
   width: 100%;
-  max-width: var(--container-max);
-  margin-inline: auto;
-  padding-inline: var(--container-pad);
+}
+
+.win.stone {
+  background: var(--stone);
+  color: var(--parchment);
+  box-shadow:
+    inset 2px 2px 0 var(--stone-edge),
+    inset -2px -2px 0 var(--stone-dark),
+    4px 4px 0 rgb(0 0 0 / 0.45);
+}
+
+.win.stone h1, .win.stone h2, .win.stone h3, .win.stone h4 {
+  color: var(--gold-bright);
+}
+
+/* absolute placement on the desktop (wide screens only) */
+@media (min-width: 64rem) {
+  .win[data-x] {
+    position: absolute;
+    left: var(--win-x, 15rem);
+    top: var(--win-y, 1rem);
+    width: var(--win-w, 30rem);
+    /* never let a placed window run past the viewport edge */
+    max-width: calc(100vw - var(--win-x, 15rem) - 1rem);
+    margin-block: 0;
+  }
+}
+
+.win.dragging {
+  box-shadow:
+    inset 2px 2px 0 var(--bevel-light),
+    inset -2px -2px 0 var(--bevel-dark),
+    8px 8px 0 rgb(0 0 0 / 0.5);
+}
+
+.win-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: var(--win-chrome);
+  padding: 0.2rem 0.4rem 0.2rem 0.6rem;
+  background: linear-gradient(90deg, var(--indigo), #2b2350 70%, var(--indigo));
+  border-bottom: 2px solid var(--ink);
+  color: var(--gold-bright);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  cursor: grab;
+  user-select: none;
+}
+
+.win.dragging .win-title {
+  cursor: grabbing;
+}
+
+.win-title .win-title-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win-title .seal {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--ember);
+  box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+
+.win-title .seal.gold {
+  background: var(--gold);
+}
+
+.win-body {
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+@media (max-width: 40rem) {
+  .win-body {
+    padding: 0.9rem 0.8rem 1rem;
+  }
+}
+
+/* ============================================================
+   Widgets & utilities
+   ============================================================ */
+
+/* plaque: inset aged-parchment label strip */
+.plaque {
+  background: var(--parchment-aged);
+  border: 2px solid var(--ink);
+  box-shadow: inset 1px 1px 0 var(--bevel-dark);
+  padding: 0.15rem 0.6rem;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* LCD strip: dark panel with magic-green text (counters, tickers meta) */
+.lcd {
+  background: #0a0810;
+  border: 2px solid var(--ink);
+  box-shadow: inset 2px 2px 0 rgb(0 0 0 / 0.6);
+  color: var(--magic);
+  font-family: var(--font-body);
+  padding: 0.15rem 0.5rem;
+  text-shadow: 0 0 6px rgb(127 224 127 / 0.5);
+}
+
+.ui-label {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+/* pixel button — beveled gold-rimmed */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--parchment-aged);
+  border: 2px solid var(--ink);
+  box-shadow:
+    inset 2px 2px 0 var(--bevel-light),
+    inset -2px -2px 0 var(--bevel-dark),
+    3px 3px 0 rgb(0 0 0 / 0.4);
+  padding: 0.25rem 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pixel-btn:hover {
+  background: var(--gold-bright);
+  color: var(--ink);
+}
+
+.pixel-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow:
+    inset 2px 2px 0 var(--bevel-light),
+    inset -2px -2px 0 var(--bevel-dark);
+}
+
+/* dashed scroll divider */
+.scroll-divider {
+  border: 0;
+  border-top: 2px dashed var(--bevel-dark);
+  margin-block: 0.8rem;
 }
 
 .text-muted {
-  color: var(--color-text-muted);
-}
-
-.font-mono-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-mono-label);
-  text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-soft);
 }
 
 .visually-hidden {

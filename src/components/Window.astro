@@ -1,0 +1,48 @@
+---
+import PixelIcon from './PixelIcon.astro';
+
+interface Props {
+  title: string;
+  icon?: Parameters<typeof PixelIcon>[0]['name'];
+  /** desktop placement (px) — only applies ≥1024px, stacked below */
+  x?: number;
+  y?: number;
+  width?: number;
+  variant?: 'parchment' | 'stone';
+  class?: string;
+}
+
+const { title, icon, x, y, width, variant = 'parchment', class: className = '' } = Astro.props;
+
+const style = [
+  x !== undefined && `--win-x: ${x}px`,
+  y !== undefined && `--win-y: ${y}px`,
+  width !== undefined && `--win-w: ${width}px`,
+]
+  .filter(Boolean)
+  .join('; ');
+
+const placed = x !== undefined ? 'placed' : '';
+---
+
+<section class={`win ${variant} ${placed} ${className}`} {style} data-x={x ?? undefined}>
+  <header class="win-title" data-drag-handle>
+    {icon && <PixelIcon name={icon} size={16} />}
+    <span class="win-title-text">{title}</span>
+    <span class="seals" aria-hidden="true">
+      <span class="seal"></span>
+      <span class="seal gold"></span>
+    </span>
+  </header>
+  <div class="win-body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .seals {
+    display: inline-flex;
+    gap: 4px;
+    flex: none;
+  }
+</style>

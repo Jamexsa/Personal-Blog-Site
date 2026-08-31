@@ -1,0 +1,72 @@
+---
+import PixelIcon from './PixelIcon.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="statusbar">
+  <span class="sb-left">
+    <PixelIcon name="castle" size={14} />
+    <span class="sb-os">KingdomOS</span>
+    <span class="sb-ver">v1.0</span>
+  </span>
+  <span class="sb-right">
+    <span class="lcd sb-guests">GUESTS: 00427</span>
+    <span class="lcd sb-clock" id="sb-clock">--:--</span>
+  </span>
+  <span class="sb-copy visually-hidden">© {year}</span>
+</footer>
+
+<style>
+  .statusbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: var(--statusbar-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 10px;
+    background: var(--stone-dark);
+    border-top: 2px solid var(--stone-edge);
+    box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.35);
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--parchment);
+  }
+
+  .sb-left,
+  .sb-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sb-os {
+    color: var(--gold-bright);
+  }
+
+  .sb-ver {
+    color: var(--stone-edge);
+  }
+
+  .sb-clock,
+  .sb-guests {
+    font-size: 0.9rem;
+    padding: 1px 6px;
+  }
+</style>
+
+<script>
+  const clock = document.querySelector<HTMLElement>('#sb-clock');
+  const tick = () => {
+    if (!clock) return;
+    const now = new Date();
+    clock.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  };
+  tick();
+  setInterval(tick, 30_000);
+</script>

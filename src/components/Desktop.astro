@@ -1,0 +1,221 @@
+---
+// The kingdom's desktop: night wallpaper (stars, moon, castle, fog)
+// plus the pointer-drag wiring for all placed windows.
+---
+
+<div class="wallpaper" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="moon"></div>
+  <svg
+    class="castle"
+    viewBox="0 0 480 180"
+    preserveAspectRatio="xMidYMax meet"
+    shape-rendering="crispEdges"
+  >
+    <!-- distant hill -->
+    <path
+      d="M0 180 L0 150 L60 128 L140 140 L220 118 L300 132 L390 122 L480 148 L480 180 Z"
+      fill="#171130"
+    />
+    <!-- castle keep -->
+    <g fill="#0d0a16">
+      <rect x="196" y="60" width="88" height="90" />
+      <rect x="188" y="52" width="24" height="98" />
+      <rect x="268" y="52" width="24" height="98" />
+      <rect x="150" y="86" width="46" height="64" />
+      <rect x="284" y="86" width="46" height="64" />
+      <rect x="140" y="78" width="16" height="72" />
+      <rect x="324" y="78" width="16" height="72" />
+      <!-- battlements -->
+      <path d="M196 60 h12 v-8 h12 v8 h10 v-8 h12 v8 h10 v-8 h12 v8 h10 v-8 h12 v8 h8 v6 h-88 Z" />
+      <path d="M188 52 h8 v-7 h8 v7 h8 v6 h-24 Z" />
+      <path d="M268 52 h8 v-7 h8 v7 h8 v6 h-24 Z" />
+      <!-- gate -->
+      <rect x="228" y="118" width="24" height="32" fill="#080610" />
+      <path d="M228 118 h24 v10 h-24 Z" fill="#080610" />
+    </g>
+    <!-- lit windows -->
+    <rect x="204" y="72" width="6" height="9" fill="#ff5a36" class="light" />
+    <rect x="262" y="88" width="6" height="9" fill="#ff5a36" class="light slow" />
+    <rect x="160" y="96" width="6" height="9" fill="#c9a227" />
+    <rect x="300" y="96" width="6" height="9" fill="#ff5a36" class="light" />
+    <!-- banner on the keep -->
+    <path d="M240 40 v-14 h3 v11 l-1.5 3 -1.5 -3 Z" fill="#0d0a16" />
+    <path d="M243 26 h10 v8 l-5 3 -5 -3 Z" fill="#c23a1e" />
+  </svg>
+  <div class="fog fog-a"></div>
+  <div class="fog fog-b"></div>
+</div>
+
+<div class="desktop-windows">
+  <slot />
+</div>
+
+<style>
+  .wallpaper {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* hand-scattered star field */
+  .stars::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow:
+      4vw 8vh 0 1px #f4ead0, 12vw 3vh 0 0 #f4ead0, 18vw 14vh 0 0 #cfc6b0,
+      26vw 6vh 0 1px #f4ead0, 33vw 18vh 0 0 #f4ead0, 40vw 4vh 0 0 #cfc6b0,
+      47vw 11vh 0 1px #f4ead0, 55vw 2vh 0 0 #f4ead0, 61vw 16vh 0 0 #cfc6b0,
+      68vw 7vh 0 1px #f4ead0, 75vw 13vh 0 0 #f4ead0, 82vw 5vh 0 0 #cfc6b0,
+      89vw 17vh 0 1px #f4ead0, 95vw 9vh 0 0 #f4ead0, 8vw 24vh 0 0 #cfc6b0,
+      22vw 28vh 0 1px #f4ead0, 37vw 26vh 0 0 #cfc6b0, 52vw 24vh 0 0 #f4ead0,
+      70vw 27vh 0 1px #f4ead0, 86vw 25vh 0 0 #cfc6b0, 15vw 36vh 0 0 #f4ead0,
+      44vw 34vh 0 1px #cfc6b0, 63vw 38vh 0 0 #f4ead0, 91vw 33vh 0 0 #f4ead0,
+      2vw 44vh 0 0 #cfc6b0, 29vw 46vh 0 1px #f4ead0, 58vw 44vh 0 0 #f4ead0,
+      78vw 47vh 0 0 #cfc6b0, 96vw 41vh 0 0 #f4ead0;
+    animation: twinkle 5s steps(2, end) infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+
+  .moon {
+    position: absolute;
+    top: 7vh;
+    right: 9vw;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 30%, transparent 0 8%, rgb(244 234 208 / 0.25) 8% 9%, transparent 9%),
+      radial-gradient(circle at 68% 60%, transparent 0 5%, rgb(244 234 208 / 0.2) 5% 6%, transparent 6%),
+      radial-gradient(circle at 35% 35%, #fbf4e0, #e8dcbc 65%, #d8c9a4 100%);
+    box-shadow:
+      0 0 40px 10px rgb(244 234 208 / 0.18),
+      0 0 120px 40px rgb(244 234 208 / 0.07);
+  }
+
+  .castle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 860px);
+    height: auto;
+    opacity: 0.9;
+  }
+
+  .light {
+    animation: flicker 3.5s steps(2, end) infinite;
+  }
+
+  .light.slow {
+    animation-duration: 5.5s;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .fog {
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    height: 90px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(157 147 190 / 0.10) 20%,
+      rgb(157 147 190 / 0.16) 50%,
+      rgb(157 147 190 / 0.10) 80%,
+      transparent
+    );
+    filter: blur(6px);
+  }
+
+  .fog-a {
+    bottom: 12vh;
+    animation: drift 26s linear infinite alternate;
+  }
+
+  .fog-b {
+    bottom: 3vh;
+    height: 60px;
+    opacity: 0.8;
+    animation: drift 34s linear infinite alternate-reverse;
+  }
+
+  @keyframes drift {
+    from { transform: translateX(-4%); }
+    to { transform: translateX(4%); }
+  }
+
+  /* windows float above the wallpaper */
+  .desktop-windows {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+
+<script>
+  // Drag wiring: any .win[data-x] can be moved by its title bar on wide
+  // screens; everything stacks and stays put below 1024px.
+  const area = document.querySelector('.desktop-windows');
+
+  if (area) {
+    const desktopQuery = matchMedia('(min-width: 64rem)');
+    let topZ = 5;
+
+    const bringToFront = (win: HTMLElement) => {
+      win.style.zIndex = String(++topZ);
+    };
+
+    area.querySelectorAll<HTMLElement>('.win').forEach((win) => {
+      win.addEventListener('pointerdown', () => bringToFront(win));
+
+      const handle = win.querySelector<HTMLElement>('[data-drag-handle]');
+      if (!handle) return;
+
+      handle.addEventListener('pointerdown', (e) => {
+        if (!desktopQuery.matches) return;
+        if ((e.target as HTMLElement).closest('.seal')) return;
+        if (e.button !== 0) return;
+
+        const rect = win.getBoundingClientRect();
+        const parent = area.getBoundingClientRect();
+        const offX = e.clientX - rect.left;
+        const offY = e.clientY - rect.top;
+        win.classList.add('dragging');
+
+        const move = (ev: PointerEvent) => {
+          const x = Math.min(Math.max(ev.clientX - parent.left - offX, 0), Math.max(parent.width - rect.width, 0));
+          const y = Math.min(Math.max(ev.clientY - parent.top - offY, 0), Math.max(parent.height - 40, 0));
+          win.style.left = `${x}px`;
+          win.style.top = `${y}px`;
+        };
+        const up = () => {
+          win.classList.remove('dragging');
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+        };
+
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+        e.preventDefault();
+      });
+    });
+  }
+</script>

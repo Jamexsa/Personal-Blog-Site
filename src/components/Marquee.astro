@@ -1,0 +1,76 @@
+---
+/** Town-crier ticker — CSS animation, pauses on hover. */
+const cries = [
+  'HEAR YE — a new devlog entry hath been posted to the Grimoire',
+  'the Knight returns from the forge with tidings of Rift Rascals',
+  'the Jester hangs new portraits in the gallery',
+  'welcome, traveler — mind the mud at the gate',
+];
+const line = cries.join('  ✦  ') + '  ✦  ';
+---
+
+<div class="crier" role="marquee" aria-label="Town crier announcements">
+  <span class="crier-tag">✦ CRIER</span>
+  <div class="crier-track">
+    <span class="crier-text">{line}</span>
+    <span class="crier-text" aria-hidden="true">{line}</span>
+  </div>
+</div>
+
+<style>
+  .crier {
+    position: fixed;
+    bottom: var(--statusbar-h);
+    left: 0;
+    right: 0;
+    z-index: 49;
+    display: flex;
+    align-items: stretch;
+    background: var(--parchment-aged);
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--ink);
+    overflow: hidden;
+    /* fade the scrolling text at both edges so clipping reads as intentional */
+    mask-image: linear-gradient(90deg, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  }
+
+  .crier-tag {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: var(--ink);
+    color: var(--gold-bright);
+    letter-spacing: 0.06em;
+  }
+
+  .crier-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: crier-scroll 40s linear infinite;
+    padding-left: 100%;
+  }
+
+  .crier:hover .crier-track {
+    animation-play-state: paused;
+  }
+
+  .crier-text {
+    white-space: nowrap;
+    padding-right: 2rem;
+  }
+
+  @keyframes crier-scroll {
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crier-track {
+      animation: none;
+      padding-left: 10px;
+    }
+  }
+</style>

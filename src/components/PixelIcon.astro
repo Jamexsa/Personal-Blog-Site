@@ -1,0 +1,164 @@
+---
+/**
+ * Original pixel glyphs drawn on an 8×8 grid, rendered as crisp SVG rects.
+ * Each icon: a color legend + rows of pixels ('.' = transparent).
+ */
+interface Props {
+  name: keyof typeof icons;
+  size?: number;
+  class?: string;
+}
+
+const icons = {
+  shield: {
+    colors: { X: '#2a2118', G: '#c9a227', E: '#ff5a36' },
+    grid: [
+      '.XXXXXX.',
+      '.XGGGGX.',
+      '.XGEEGX.',
+      '.XGEEGX.',
+      '.XGGGGX.',
+      '..XGGX..',
+      '..XGGX..',
+      '...XX...',
+    ],
+  },
+  tome: {
+    colors: { X: '#2a2118', P: '#a03c2a', G: '#c9a227' },
+    grid: [
+      '........',
+      'XXXXXXXX',
+      'XPPPPPPX',
+      'XPXGGXPX',
+      'XPPGGPPX',
+      'XPXGGXPX',
+      'XPPPPPPX',
+      'XXXXXXXX',
+    ],
+  },
+  lute: {
+    colors: { X: '#2a2118', P: '#a06a2a', G: '#c9a227' },
+    grid: [
+      '...XG...',
+      '...XG...',
+      '...XG...',
+      '..XPPX..',
+      '.XPPPPX.',
+      'XPPGGPPX',
+      'XPPPPPPX',
+      '.XXXXXX.',
+    ],
+  },
+  jester: {
+    colors: { X: '#2a2118', G: '#c9a227', E: '#ff5a36', M: '#7fe07f' },
+    grid: [
+      'E...G...M',
+      'E..GGG..M',
+      '.E.GGG.E.',
+      '.XGGGGGX.',
+      'XEGGGGGMX',
+      '.XGGGGGX.',
+      '..XXXXX..',
+      '........',
+    ],
+  },
+  castle: {
+    colors: { X: '#0d0a16', W: '#ff5a36', G: '#c9a227' },
+    grid: [
+      'X..X.X..X',
+      'X..X.X..X',
+      'XXXXXXXXX',
+      'XWWXXXWWX',
+      'XXXXXXXXX',
+      'XWWXXXWWX',
+      'XXXXXXXXX',
+      'XXXXXXXXX',
+    ],
+  },
+  raven: {
+    colors: { X: '#e9d8a6', G: '#c9a227', B: '#2a2118' },
+    grid: [
+      '.....XX.',
+      '....XGXB',
+      '..XXXXXB',
+      '.XXXXXX.',
+      'XXXXXXX.',
+      'XXXXXX..',
+      '.X..X...',
+      '.X..X...',
+    ],
+  },
+  banner: {
+    colors: { X: '#2a2118', G: '#c9a227', E: '#ff5a36' },
+    grid: [
+      'XXXXXXX.',
+      'XGGGGEX.',
+      'XGGGXEX.',
+      'XGGX.EX.',
+      'XGX..EX.',
+      'XX..XBX.',
+      'X...XX..',
+      '........',
+    ],
+  },
+  moon: {
+    colors: { X: '#2a2118', M: '#f4ead0' },
+    grid: [
+      '..XXX...',
+      '.XMMMX..',
+      '.XMMXX..',
+      '.XMX.X..',
+      '.XMX.X..',
+      '.XMMXX..',
+      '.XMMMX..',
+      '..XXX...',
+    ],
+  },
+  star: {
+    colors: { X: '#2a2118', G: '#e8c558' },
+    grid: [
+      '...X....',
+      '...X....',
+      '..XGX...',
+      'XGGXGGX.',
+      '..XGX...',
+      '...X....',
+      '...X....',
+      '........',
+    ],
+  },
+} as const;
+
+const { name, size = 16, class: className = '' } = Astro.props;
+const icon = icons[name];
+const legend = icon.colors as Record<string, string>;
+const w = icon.grid[0].length;
+const h = icon.grid.length;
+
+const pixels: { x: number; y: number; fill: string }[] = [];
+icon.grid.forEach((row, y) => {
+  [...row].forEach((cell, x) => {
+    if (cell !== '.') pixels.push({ x, y, fill: legend[cell] });
+  });
+});
+---
+
+<svg
+  class={`pixel-icon ${className}`}
+  width={size}
+  height={size}
+  viewBox={`0 0 ${w} ${h}`}
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+>
+  {pixels.map((p) => <rect x={p.x} y={p.y} width="1" height="1" fill={p.fill} />)}
+</svg>
+
+<style>
+  .pixel-icon {
+    image-rendering: pixelated;
+    flex: none;
+    display: inline-block;
+    vertical-align: middle;
+  }
+</style>

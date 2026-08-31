@@ -1,163 +1,151 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import PixelIcon from '../../components/PixelIcon.astro';
 import { socials } from '../../components/socials';
 ---
 
 <BaseLayout
   title="About"
-  description="Who I am, what I make, and how to get in touch — game developer and artist."
+  description="The Bard's tale — who I am, what I make, and how to send a raven."
 >
-  <header class="page-header">
-    <p class="font-mono-label">About</p>
-    <h1>Hi, I'm Your Name.</h1>
-  </header>
+  <Window title="The Bard's Tale — about the author" icon="lute" x={230} y={16} width={580} class="bard">
+    <header class="bard-header">
+      <h1>Hail, I'm Your Name.</h1>
+    </header>
 
-  <div class="bio">
-    <img
-      class="portrait"
-      src="https://picsum.photos/seed/portrait/480/560"
-      alt="Portrait placeholder"
-      width="480"
-      height="560"
-      loading="lazy"
-      decoding="async"
-    />
-    <div class="bio-text">
-      <p>
-        Placeholder bio: I'm an independent game developer and artist making
-        small, weird games about places and the feelings they hold. Before going
-        solo I worked on [something plausible]; now I split my time between
-        prototyping mechanics and painting the worlds they live in.
-      </p>
-      <p>
-        I care a lot about game feel, restrained palettes, and finishing the
-        ugly version first. The devlog on this site is where I document that
-        process — the wins, the detours, and the placeholder rectangles that
-        became final art.
-      </p>
-      <p>
-        Tools of the trade: Godot and Unity, GameMaker for the odd ones, a
-        custom C engine when I'm feeling brave, and Krita for most of the art.
-      </p>
-      <p class="currently">
-        <span class="font-mono-label">Now building</span>
-        <span>Rift Rascals — a co-op arena brawler where the arena is the weapon.</span>
-      </p>
+    <div class="bio">
+      <img
+        class="portrait"
+        src="https://picsum.photos/seed/portrait/240/280"
+        alt="Portrait placeholder"
+        width="240"
+        height="280"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="bio-text">
+        <p>
+          Placeholder tale: an independent game developer and artist making
+          small, weird games about places and the feelings they hold. By day a
+          wanderer of engines; by night a painter of small worlds by
+          candlelight.
+        </p>
+        <p>
+          I care about game feel, restrained palettes, and finishing the ugly
+          version first. The Grimoire on this site is where the process is
+          written down — the wins, the detours, and the placeholder rectangles
+          that became final art.
+        </p>
+        <p>
+          Tools of the trade: Godot and Unity, GameMaker for the odd ones, a
+          custom C engine when feeling brave, and Krita for most of the art.
+        </p>
+        <p class="currently">
+          <span class="banner-tag forge">AT THE FORGE</span>
+          <span>Rift Rascals — a co-op arena brawler where the arena is the weapon.</span>
+        </p>
+      </div>
     </div>
-  </div>
 
-  <section class="contact">
-    <h2>Elsewhere &amp; contact</h2>
-    <p class="text-muted">
-      For project inquiries, jam invitations, or palette talk:
-      <a href="mailto:hello@example.com">hello@example.com</a> (placeholder).
-    </p>
-    <ul class="social-list">
-      {socials.map(({ label, href }) => (
-        <li>
-          <a href={href}>
-            <span class="font-mono-label">{label}</span>
-            <span class="arrow" aria-hidden="true">↗</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
+    <section class="ravenpost">
+      <h2>Send a raven</h2>
+      <p class="ui-label">
+        For inquiries, jam invitations, or palette talk:
+        <a href="mailto:hello@example.com">hello@example.com</a> (placeholder).
+      </p>
+      <ul class="raven-list">
+        {socials.map(({ label, href }) => (
+          <li>
+            <a class="pixel-btn" href={href}>
+              <PixelIcon name="raven" size={14} />
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </Window>
 </BaseLayout>
 
 <style>
-  .page-header {
-    margin-block: var(--space-4) var(--space-8);
+  .bard-header h1 {
+    font-size: var(--text-3xl);
   }
 
-  .page-header h1 {
-    font-size: var(--text-4xl);
-    margin-top: var(--space-2);
-  }
-
-  /* Bio: portrait + text side by side from tablet up */
   .bio {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: 1.2rem;
+    margin-top: 0.8rem;
   }
 
   .portrait {
     width: 100%;
-    max-width: 20rem;
-    height: auto;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-line);
+    max-width: 240px;
+    border: 3px solid var(--gold);
+    outline: 2px solid var(--ink);
+    image-rendering: pixelated;
   }
 
   .bio-text p {
-    margin-block: var(--space-4);
-    max-width: 60ch;
+    margin-block: 0.6rem;
+    max-width: 58ch;
   }
 
   .currently {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    margin-top: var(--space-5);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--color-line);
-  }
-
-  .currently > span:last-child {
-    font-family: var(--font-heading);
-    font-weight: 600;
-  }
-
-  .contact {
-    margin-top: var(--space-12);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--color-line);
-  }
-
-  .contact h2 {
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-4);
-  }
-
-  .contact .text-muted {
-    max-width: 60ch;
-    margin-bottom: var(--space-6);
-  }
-
-  .social-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(12rem, 100%), 1fr));
-    gap: var(--space-3);
-  }
-
-  .social-list a {
-    display: inline-flex;
     align-items: baseline;
-    gap: var(--space-2);
-    color: var(--color-text-muted);
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 2px dashed var(--bevel-dark);
   }
 
-  .social-list a:hover {
-    color: var(--color-accent);
+  .banner-tag {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 1px 8px;
+    border: 1px solid var(--ink);
+    color: var(--parchment);
   }
 
-  .social-list .arrow {
-    font-size: var(--text-sm);
-    transition: transform 120ms ease;
+  .banner-tag.forge {
+    background: var(--ember);
+    animation: forgeblink 1.4s steps(2, end) infinite;
   }
 
-  .social-list a:hover .arrow {
-    transform: translate(2px, -2px);
+  @keyframes forgeblink {
+    50% { opacity: 0.6; }
+  }
+
+  .ravenpost {
+    margin-top: 1.6rem;
+    padding-top: 1rem;
+    border-top: 3px double var(--gold);
+  }
+
+  .ravenpost h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: 0.4rem;
+  }
+
+  .raven-list {
+    list-style: none;
+    margin: 0.8rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   @media (min-width: 48rem) {
     .bio {
-      grid-template-columns: minmax(12rem, 16rem) 1fr;
-      gap: var(--space-8);
+      grid-template-columns: minmax(11rem, 15rem) 1fr;
+      gap: 1.6rem;
     }
   }
 </style>

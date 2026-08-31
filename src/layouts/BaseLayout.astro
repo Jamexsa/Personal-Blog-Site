@@ -1,11 +1,13 @@
 ---
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/space-grotesk/500.css';
-import '@fontsource/space-grotesk/700.css';
+import '@fontsource/jacquard-12';
+import '@fontsource/vt323';
+import '@fontsource/pixelify-sans/400.css';
+import '@fontsource/pixelify-sans/600.css';
 import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Desktop from '../components/Desktop.astro';
+import Tavern from '../components/Tavern.astro';
+import Marquee from '../components/Marquee.astro';
+import StatusBar from '../components/StatusBar.astro';
 
 interface Props {
   title: string;
@@ -16,7 +18,7 @@ interface Props {
 
 const {
   title,
-  description = 'Personal portfolio and devlog — games, art, and process.',
+  description = 'A game developer and artist of the realm — games, art, and the devlog grimoire.',
   image = 'https://picsum.photos/seed/og-fallback/1200/630',
 } = Astro.props;
 
@@ -44,18 +46,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <title>{fullTitle}</title>
   </head>
   <body>
-    <Header />
-    <main class="container site-main">
+    <Desktop>
+      <Tavern />
       <slot />
-    </main>
-    <Footer />
+    </Desktop>
+    <Marquee />
+    <StatusBar />
   </body>
 </html>
-
-<style>
-  .site-main {
-    /* Breathing room below the sticky header; fluid so it scales with viewport */
-    padding-block: var(--space-8) var(--space-12);
-    min-height: 60vh;
-  }
-</style>
