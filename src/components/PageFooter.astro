@@ -1,0 +1,57 @@
+---
+/**
+ * Shared page footer: last-tended rune + "return to the keep" back-to-top
+ * seal. Drop at the bottom of any long window body.
+ */
+interface Props {
+  /** e.g. "1 Sep 2026" — when this wing was last tended */
+  updated?: string;
+}
+
+const { updated } = Astro.props;
+---
+
+<footer class="page-foot">
+  {updated && (
+    <p class="foot-rune">
+      <span aria-hidden="true">☾</span> this wing was last tended: {updated}
+    </p>
+  )}
+  <button class="pixel-btn small keep-btn" type="button">
+    <span aria-hidden="true">▲</span> return to the keep
+  </button>
+</footer>
+
+<style>
+  .page-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1.5rem;
+    padding-top: 0.9rem;
+    border-top: 3px double var(--gold);
+  }
+
+  .foot-rune {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    display: inline-flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .pixel-btn.small {
+    font-size: 0.9rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.keep-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>

@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+import PixelIcon from '../../components/PixelIcon.astro';
+import { resourceGroups } from '../../data/resources';
+---
+
+<BaseLayout
+  title="Resources"
+  description="The Merchant's Stock — the tools, engines, and small wonders this realm runs on."
+>
+  <Window title="The Merchant's Stock — tools & resources" icon="bag" x={230} y={16} width={760} class="stock">
+    <SectionBanner
+      text="Stock"
+      sub="these wares have served the realm well"
+    />
+
+    <p class="ui-label">browse the stalls — coin optional, most of this cart is free.</p>
+    <hr class="scroll-divider" />
+
+    {resourceGroups.map((group) => (
+      <section class="stall" aria-labelledby={`stall-${group.id}`}>
+        <h2 class="stall-title" id={`stall-${group.id}`}>
+          <PixelIcon name="banner" size={16} />
+          {group.title}
+        </h2>
+        <p class="stall-blurb">{group.blurb}</p>
+        <ul class="stall-list">
+          {group.items.map(({ name, url, note, specialty }) => {
+            const host = url.startsWith('http') ? new URL(url).hostname.replace('www.', '') : '';
+            return (
+              <li class="stall-item">
+                <p class="item-head">
+                  <a href={url} target="_blank" rel="noopener">{name} ↗</a>
+                  {specialty && <span class="plaque spec">{specialty}</span>}
+                </p>
+                <p class="item-note">{note}{host && <span class="host"> · {host}</span>}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
+
+    <p class="credits ui-label">
+      credit where due: every stall above was recommended by experience, not coin.
+    </p>
+
+    <PageFooter updated="1 Sep 2026" />
+  </Window>
+</BaseLayout>
+
+<style>
+  .stall {
+    margin-block: 1.2rem;
+  }
+
+  .stall-title {
+    font-size: var(--text-2xl);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stall-blurb {
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 0.15rem 0 0.6rem;
+  }
+
+  .stall-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 2px solid var(--ink);
+    background: var(--parchment-aged);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark), inset -2px -2px 0 var(--bevel-light);
+  }
+
+  .stall-item {
+    padding: 0.55rem 0.8rem;
+  }
+
+  .stall-item + .stall-item {
+    border-top: 2px dashed var(--bevel-dark);
+  }
+
+  .item-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .item-head a {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .item-head a:hover {
+    color: var(--ember-deep);
+    border-bottom-color: var(--ember-deep);
+  }
+
+  .plaque.spec {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .item-note {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin-top: 0.15rem;
+  }
+
+  .host {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+  }
+
+  .credits {
+    margin-top: 1.4rem;
+    padding-top: 0.9rem;
+    border-top: 3px double var(--gold);
+  }
+</style>

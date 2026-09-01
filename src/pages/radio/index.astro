@@ -1,0 +1,375 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+import PixelIcon from '../../components/PixelIcon.astro';
+import { stations, playlist, tunedStationId } from '../../data/radio';
+
+const tuned = stations.find((s) => s.id === tunedStationId) ?? stations[0];
+---
+
+<BaseLayout
+  title="Radio"
+  description="The Bard's Radio — fantasy stations for the realm: minstrels, tavern talk, and lullabies."
+>
+  <Window title="The Bard's Radio — fantasy stations" icon="note" x={230} y={16} width={760} class="radio">
+    <SectionBanner
+      text="Radio"
+      sub="the realm's frequencies, tuned by hand"
+    />
+
+    <div class="radio-layout">
+      <section class="dial" aria-label="Station dial">
+        <h2 class="r-title"><PixelIcon name="star" size={16} /> The dial</h2>
+        <ul class="dial-list">
+          {stations.map((station) => {
+            const isTuned = station.id === tuned.id;
+            return (
+              <li class:list={{ station: true, tuned: isTuned }}>
+                <p class="station-head">
+                  <span class:list={{ kind: true, talk: station.kind === 'talk' }}>
+                    {station.kind === 'talk' ? '[TALK]' : '[MUSIC]'}
+                  </span>
+                  <span class="station-name">{station.name}</span>
+                  {isTuned && <span class="tuned-tag">▶ TUNED</span>}
+                </p>
+                <p class="station-tagline">{station.tagline}</p>
+                <p class="lcd station-now">
+                  ♪ {station.nowPlaying.title} — {station.nowPlaying.artist} · {station.nowPlaying.length}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section class="player" aria-label="CD player">
+        <h2 class="r-title"><PixelIcon name="note" size={16} /> The player</h2>
+        <div class="cd-deck">
+          <div class="cd-art" aria-hidden="true">
+            <PixelIcon name="moon" size={64} class="cd-art-icon" />
+            <div class="eq" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="cd-meta">
+            <div class="lcd track-line">
+              <span>NOW PLAYING · {tuned.name.toUpperCase()}</span>
+              <span class="track">{tuned.nowPlaying.title}</span>
+              <span>{tuned.nowPlaying.artist} · {tuned.nowPlaying.length}</span>
+            </div>
+            <div class="progress" role="img" aria-label="Playback progress, decorative">
+              <span class="progress-fill"></span>
+            </div>
+            <div class="transport" aria-hidden="true">
+              <span class="pixel-btn small">⏮</span>
+              <span class="pixel-btn small">▶</span>
+              <span class="pixel-btn small">⏭</span>
+              <span class="pixel-btn small">⏏</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="r-sub">the tuned scroll — {tuned.name}</h3>
+        <ol class="playlist">
+          {playlist.map((track, i) => (
+            <li class:list={{ row: true, now: i === 0 }}>
+              <span class="row-no">{String(i + 1).padStart(2, '0')}</span>
+              <span class="row-title">{track.title}</span>
+              <span class="row-artist">{track.artist}</span>
+              <span class="row-len">{track.length}</span>
+            </li>
+          ))}
+        </ol>
+
+        <p class="wax-note">
+          <span class="wax" aria-hidden="true">🔒</span>
+          the tower is silent until the bard returns — drop songs into
+          <code>public/radio/</code> and the seal will lift.
+        </p>
+      </section>
+    </div>
+
+    <PageFooter updated="1 Sep 2026" />
+  </Window>
+</BaseLayout>
+
+<style>
+  .r-title {
+    font-size: var(--text-2xl);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .r-sub {
+    font-size: var(--text-xl);
+    margin-top: 1.2rem;
+  }
+
+  .radio-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  /* dial */
+  .dial-list {
+    list-style: none;
+    margin: 0.7rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .station {
+    background: var(--parchment-aged);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark), inset -2px -2px 0 var(--bevel-light);
+    padding: 0.6rem 0.7rem;
+  }
+
+  .station.tuned {
+    border-color: var(--gold);
+    box-shadow:
+      inset 2px 2px 0 var(--bevel-dark),
+      inset -2px -2px 0 var(--bevel-light),
+      0 0 0 2px var(--gold);
+  }
+
+  .station-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-ui);
+  }
+
+  .kind {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: var(--indigo);
+    color: var(--gold-bright);
+    border: 1px solid var(--ink);
+    padding: 0 5px;
+  }
+
+  .kind.talk {
+    background: var(--ember-deep);
+    color: var(--moon);
+  }
+
+  .station-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+
+  .tuned-tag {
+    margin-left: auto;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--magic);
+    animation: tunedblink 1.6s steps(2, end) infinite;
+  }
+
+  @keyframes tunedblink {
+    50% { opacity: 0.5; }
+  }
+
+  .station-tagline {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    margin-top: 0.15rem;
+  }
+
+  .station-now {
+    margin-top: 0.45rem;
+    font-size: 1rem;
+    display: inline-block;
+  }
+
+  /* player */
+  .cd-deck {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    background: var(--stone);
+    color: var(--parchment);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 var(--stone-edge), inset -2px -2px 0 var(--stone-dark), 4px 4px 0 rgb(0 0 0 / 0.35);
+    padding: 0.9rem;
+  }
+
+  .cd-art {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem;
+    background: var(--night-deep);
+    border: 2px solid var(--ink);
+  }
+
+  .cd-art-icon {
+    filter: drop-shadow(0 0 12px rgb(244 234 208 / 0.35));
+  }
+
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 24px;
+  }
+
+  .eq span {
+    width: 7px;
+    background: var(--magic);
+    box-shadow: 0 0 6px rgb(127 224 127 / 0.6);
+    animation: eqbounce 0.9s steps(3, end) infinite alternate;
+  }
+
+  .eq span:nth-child(1) { animation-delay: 0s; }
+  .eq span:nth-child(2) { animation-delay: 0.15s; }
+  .eq span:nth-child(3) { animation-delay: 0.3s; }
+  .eq span:nth-child(4) { animation-delay: 0.1s; }
+  .eq span:nth-child(5) { animation-delay: 0.25s; }
+  .eq span:nth-child(6) { animation-delay: 0.05s; }
+
+  @keyframes eqbounce {
+    from { height: 5px; }
+    to { height: 22px; }
+  }
+
+  .cd-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .track-line {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 1.05rem;
+  }
+
+  .track-line .track {
+    color: var(--gold-bright);
+    text-shadow: 0 0 6px rgb(232 197 88 / 0.4);
+  }
+
+  .progress {
+    height: 14px;
+    background: #0a0810;
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 rgb(0 0 0 / 0.6);
+  }
+
+  .progress-fill {
+    display: block;
+    height: 100%;
+    width: 38%;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--magic) 0 6px,
+      #4c9a4c 6px 8px
+    );
+    animation: progressdrift 12s linear infinite alternate;
+  }
+
+  @keyframes progressdrift {
+    from { width: 12%; }
+    to { width: 86%; }
+  }
+
+  .transport {
+    display: flex;
+    gap: 8px;
+  }
+
+  .playlist {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    border: 2px solid var(--ink);
+    background: var(--parchment-aged);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark), inset -2px -2px 0 var(--bevel-light);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr auto 3.5rem;
+    align-items: baseline;
+    gap: 8px;
+    padding: 0.4rem 0.7rem;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+  }
+
+  .row + .row {
+    border-top: 2px dashed var(--bevel-dark);
+  }
+
+  .row.now {
+    background: rgb(127 224 127 / 0.18);
+  }
+
+  .row-now-marker {
+    color: var(--magic);
+  }
+
+  .row-no {
+    color: var(--ink-soft);
+  }
+
+  .row-title {
+    color: var(--ink);
+  }
+
+  .row.now .row-title::after {
+    content: ' ♪';
+    color: var(--magic);
+  }
+
+  .row-artist {
+    color: var(--ink-soft);
+  }
+
+  .row-len {
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  .wax-note {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 0.9rem;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+
+  .wax-note code {
+    font-family: var(--font-body);
+    background: var(--stone-dark);
+    color: var(--magic);
+    border: 1px solid var(--ink);
+    padding: 0 5px;
+  }
+
+  @media (min-width: 48rem) {
+    .radio-layout {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .cd-deck {
+      grid-template-columns: minmax(9rem, 11rem) 1fr;
+    }
+  }
+</style>

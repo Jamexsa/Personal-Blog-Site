@@ -1,0 +1,314 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import PixelIcon from '../../components/PixelIcon.astro';
+
+const entries = (await getCollection('guestbook')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Where the raven carries new signatures. Placeholder, like the About page.
+const innkeeperMail = 'hello@example.com';
+---
+
+<BaseLayout
+  title="Guestbook"
+  description="The Inn's Ledger — leave a mark, a song, and a recommendation for the innkeeper."
+>
+  <Window title="The Inn's Ledger — sign the book" icon="tankard" x={230} y={16} width={760} class="ledger-win">
+    <SectionBanner
+      text="Ledger"
+      sub={`${entries.length} ${entries.length === 1 ? 'signature' : 'signatures'} in the inn's book`}
+    />
+
+    <section class="signing" aria-label="Sign the ledger">
+      <h2 class="sign-title">Dip the quill</h2>
+      <p class="ui-label">
+        the innkeeper transcribes every raven by hand into the ledger below.
+      </p>
+      <form class="sign-form" data-sign-form data-mail={innkeeperMail}>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">thy name *</span>
+            <input type="text" name="name" required maxlength="40" autocomplete="off" />
+          </label>
+          <label class="field">
+            <span class="field-label">thy keep (website)</span>
+            <input type="url" name="website" placeholder="https://" autocomplete="url" />
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">favorite tavern song</span>
+            <input type="text" name="song" maxlength="60" placeholder="lute core — disc 03" />
+          </label>
+          <label class="field">
+            <span class="field-label">a recommendation for the innkeeper</span>
+            <input type="text" name="recommendation" maxlength="80" placeholder="a game, a film, a pie…" />
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">
+            thy message * <span class="char-count" data-char-count>0 / 400</span>
+          </span>
+          <textarea name="message" required rows="4" maxlength="400" data-message></textarea>
+        </label>
+        <div class="form-actions">
+          <button class="pixel-btn" type="submit">
+            <PixelIcon name="raven" size={14} />
+            send by raven
+          </button>
+          <button class="pixel-btn" type="button" data-copy>
+            copy parchment
+          </button>
+        </div>
+        <p class="form-note" data-form-note aria-live="polite"></p>
+      </form>
+    </section>
+
+    <hr class="scroll-divider big" />
+
+    <section class="entries" aria-label="Ledger entries">
+      <h2 class="sign-title">The signatures</h2>
+      {entries.length === 0 ? (
+        <p class="empty">The ledger's first page waits for a brave quill.</p>
+      ) : (
+        <ul class="entry-list">
+          {entries.map(({ body, data }) => (
+            <li class="ledger-entry">
+              <div class="seal-col" aria-hidden="true">
+                <span class="wax-seal"></span>
+              </div>
+              <div class="entry-main">
+                <p class="entry-head">
+                  <span class="entry-name">{data.name}</span>
+                  <FormattedDate date={data.date} />
+                </p>
+                <div class="entry-body">{body?.trim()}</div>
+                <p class="entry-extra">
+                  {data.favoriteSong && (
+                    <span class="plaque">♪ {data.favoriteSong}</span>
+                  )}
+                  {data.recommendation && (
+                    <span class="plaque">✦ {data.recommendation}</span>
+                  )}
+                  {data.website && (
+                    <a href={data.website} target="_blank" rel="noopener">
+                      visit their keep ↗
+                    </a>
+                  )}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <PageFooter updated="1 Sep 2026" />
+  </Window>
+</BaseLayout>
+
+<style>
+  .sign-title {
+    font-size: var(--text-2xl);
+    margin-bottom: 0.3rem;
+  }
+
+  .sign-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-top: 0.7rem;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .field-label {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .char-count {
+    color: var(--magic);
+    font-family: var(--font-body);
+  }
+
+  input,
+  textarea {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--ink);
+    background: var(--parchment);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark);
+    padding: 0.3rem 0.5rem;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 3px dashed var(--ember);
+    outline-offset: 1px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 5.5rem;
+  }
+
+  .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .form-note {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    min-height: 1.2em;
+  }
+
+  .scroll-divider.big {
+    margin-block: 1.4rem;
+  }
+
+  .empty {
+    color: var(--ink-soft);
+  }
+
+  .entry-list {
+    list-style: none;
+    margin: 0.7rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ledger-entry {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 0.8rem;
+    background: var(--parchment-aged);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark), inset -2px -2px 0 var(--bevel-light);
+    padding: 0.8rem 0.9rem;
+  }
+
+  .seal-col {
+    display: flex;
+    justify-content: center;
+    padding-top: 4px;
+  }
+
+  .wax-seal {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--ember), var(--ember-deep) 70%);
+    border: 2px solid var(--ink);
+    box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.3);
+  }
+
+  .entry-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .entry-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--ink);
+  }
+
+  .entry-body {
+    margin-top: 0.35rem;
+    max-width: 62ch;
+    white-space: pre-line;
+  }
+
+  .entry-extra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .entry-extra .plaque {
+    font-size: 0.8rem;
+  }
+
+  @media (min-width: 48rem) {
+    .field-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-sign-form]');
+  const message = document.querySelector<HTMLTextAreaElement>('[data-message]');
+  const counter = document.querySelector<HTMLElement>('[data-char-count]');
+  const note = document.querySelector<HTMLElement>('[data-form-note]');
+
+  message?.addEventListener('input', () => {
+    if (counter) counter.textContent = `${message.value.length} / 400`;
+  });
+
+  const buildParchment = (): string => {
+    const data = new FormData(form!);
+    const get = (key: string) => String(data.get(key) ?? '').trim();
+    return [
+      `— A NEW PAGE FOR THE INN'S LEDGER —`,
+      ``,
+      `name: ${get('name') || '—'}`,
+      `keep: ${get('website') || '—'}`,
+      `favorite song: ${get('song') || '—'}`,
+      `recommendation: ${get('recommendation') || '—'}`,
+      ``,
+      `message:`,
+      `${get('message') || '—'}`,
+    ].join('\n');
+  };
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const mail = (form as HTMLElement).dataset.mail ?? '';
+    const subject = encodeURIComponent(`A new page for the Inn's Ledger — ${new FormData(form).get('name') ?? 'a traveler'}`);
+    const body = encodeURIComponent(buildParchment());
+    window.location.href = `mailto:${mail}?subject=${subject}&body=${body}`;
+    if (note) note.textContent = 'the raven is away — finish the letter in thy mail app.';
+  });
+
+  document.querySelector<HTMLButtonElement>('[data-copy]')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(buildParchment());
+      if (note) note.textContent = 'parchment copied — carry it wherever thou must.';
+    } catch {
+      if (note) note.textContent = 'the scribe could not copy — thy browser guards the parchment.';
+    }
+  });
+</script>

@@ -1,0 +1,61 @@
+---
+import PixelIcon from './PixelIcon.astro';
+
+/**
+ * The fountain in the courtyard — a coin-toss toy. The count lives in
+ * localStorage; the water does not care about backends.
+ */
+---
+
+<div class="fountain">
+  <div class="lcd lcd-counter">
+    COINS IN THE FOUNTAIN: <span data-coin-count>0000</span>
+  </div>
+  <button class="pixel-btn small" type="button" data-coin-toss>
+    <PixelIcon name="coin" size={14} />
+    toss a coin
+  </button>
+</div>
+
+<style>
+  .fountain {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .lcd-counter {
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    display: inline-block;
+  }
+</style>
+
+<script>
+  const KEY = 'kingdomos-fountain';
+  const countEl = document.querySelector<HTMLElement>('[data-coin-count]');
+  const tossBtn = document.querySelector<HTMLButtonElement>('[data-coin-toss]');
+
+  const render = (n: number) => {
+    if (countEl) countEl.textContent = String(n).padStart(4, '0');
+  };
+
+  let coins = 0;
+  try {
+    coins = Number(localStorage.getItem(KEY) ?? '0') || 0;
+  } catch {
+    /* empty fountain */
+  }
+  render(coins);
+
+  tossBtn?.addEventListener('click', () => {
+    coins += 1;
+    render(coins);
+    try {
+      localStorage.setItem(KEY, String(coins));
+    } catch {
+      /* the coin rolled behind the basin */
+    }
+  });
+</script>

@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
-import PixelIcon from '../../components/PixelIcon.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
 import { getCollection } from 'astro:content';
 
 // Undated (in-development/prototype) entries first, then by release date desc.
@@ -20,8 +21,8 @@ const statusBanner: Record<string, { label: string; class: string }> = {
 
 <BaseLayout title="Games" description="Deeds of the Knight — released games, works at the forge, and prototypes.">
   <Window title="Deeds of the Knight — games & experiments" icon="shield" x={230} y={16} width={760} class="deeds">
+    <SectionBanner text="Deeds" sub="the heralds' rolls — released, forged, and rumored" />
     <header class="deeds-header">
-      <h1>Deeds</h1>
       <p class="ui-label">
         {games.length > 0
           ? `${games.length} ${games.length === 1 ? 'deed' : 'deeds'} recorded in the heralds' rolls.`
@@ -86,12 +87,13 @@ const statusBanner: Record<string, { label: string; class: string }> = {
         })}
       </ul>
     )}
+    <PageFooter updated="1 Sep 2026" />
   </Window>
 </BaseLayout>
 
 <style>
-  .deeds-header h1 {
-    font-size: var(--text-4xl);
+  .deeds-header .ui-label {
+    margin-top: 0.2rem;
   }
 
   .deed-list {

@@ -1,0 +1,116 @@
+---
+import { render, getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+
+export async function getStaticPaths() {
+  // Detail pages exist only for consecrated shrines; sealed ones stay on the index.
+  const shrines = (await getCollection('shrines')).filter(
+    ({ data }) => data.status === 'complete'
+  );
+  return shrines.map((shrine) => ({
+    params: { id: shrine.id },
+    props: { shrine },
+  }));
+}
+
+const { shrine } = Astro.props;
+const { Content } = await render(shrine);
+const { data } = shrine;
+const host = data.url ? new URL(data.url).hostname.replace('www.', '') : '';
+---
+
+<BaseLayout title={data.title} description={data.blurb}>
+  <Window title={`Reliquary — ${data.title}`} icon="chest" x={230} y={16} width={680} class="shrine-detail">
+    <SectionBanner text={data.title} sub={`a shrine · ${data.medium}`} />
+
+    {data.cover && (
+      <img
+        class="relic-cover"
+        src={data.cover}
+        alt={`Relic of ${data.title}`}
+        width="480"
+        height="300"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+
+    <p class="shrine-blurb-lede">{data.blurb}</p>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {data.url && (
+      <p class="visit-official">
+        <a class="pixel-btn" href={data.url} target="_blank" rel="noopener">
+          pay respects at the origin — {host} ↗
+        </a>
+      </p>
+    )}
+
+    <p class="relic-note ui-label">
+      this shrine is an act of love rendered in our own hand — all relics belong to their makers.
+    </p>
+
+    <PageFooter updated="1 Sep 2026" />
+  </Window>
+</BaseLayout>
+
+<style>
+  .relic-cover {
+    width: 100%;
+    aspect-ratio: 8 / 5;
+    object-fit: cover;
+    border: 3px solid var(--gold);
+    outline: 2px solid var(--ink);
+    image-rendering: pixelated;
+    margin-bottom: 1rem;
+  }
+
+  .shrine-blurb-lede {
+    font-size: var(--text-lg);
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px dashed var(--bevel-dark);
+  }
+
+  .prose {
+    max-width: 62ch;
+  }
+
+  .prose :global(h2) {
+    font-size: var(--text-2xl);
+    margin-top: 1.4rem;
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 3px double var(--gold);
+  }
+
+  .prose :global(p) {
+    margin-block: 0.6rem;
+  }
+
+  .prose :global(ul) {
+    margin-block: 0.6rem;
+    padding-inline-start: 1.4rem;
+  }
+
+  .prose :global(li::marker) {
+    color: var(--ember-deep);
+  }
+
+  .visit-official {
+    margin-top: 1.3rem;
+  }
+
+  .relic-note {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+  }
+</style>

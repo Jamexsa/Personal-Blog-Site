@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+import PixelIcon from '../../components/PixelIcon.astro';
+
+/**
+ * The Workshop — desk setup (placeholder specs to replace) + a small
+ * functional tool: a 16×16 pixel sketchpad painted with the kingdom's palette.
+ */
+const steedSpecs = [
+  ['the steed', 'PlaceholderBook Pro 14" — the faithful laptop'],
+  ['its heart', 'M1-class chip, 16 GB of memory — plenty for pixel realms'],
+  ['the looking glass', 'a modest external monitor, color calibrated by vibes'],
+  ['the torch', 'a warm desk lamp set to "candlelight, honest"'],
+  ['the scepter', 'a well-worn mouse and a cheap tablet pen'],
+] as const;
+
+const shelf = [
+  { name: 'Godot', rune: 'forge' },
+  { name: 'Aseprite', rune: 'ink' },
+  { name: 'Krita', rune: 'ink' },
+  { name: 'BeepBox', rune: 'song' },
+  { name: 'Audacity', rune: 'song' },
+  { name: 'VS Code', rune: 'forge' },
+] as const satisfies readonly { name: string; rune: 'forge' | 'ink' | 'song' }[];
+
+const palette = [
+  ['night', '#141021'],
+  ['indigo', '#1d1733'],
+  ['parchment', '#e9d8a6'],
+  ['ink', '#2a2118'],
+  ['gold', '#c9a227'],
+  ['ember', '#ff5a36'],
+  ['magic', '#7fe07f'],
+  ['moon', '#f4ead0'],
+] as const;
+---
+
+<BaseLayout
+  title="Workspace"
+  description="The Workshop — the desk this realm is built on, plus a small pixel sketchpad to play with."
+>
+  <Window title="The Workshop — desk & tools" icon="hammer" x={230} y={16} width={760} class="workshop">
+    <SectionBanner
+      text="Workshop"
+      sub="where the keeps and games are actually hammered out"
+    />
+
+    <section class="setup" aria-label="The desk">
+      <h2 class="ws-title"><PixelIcon name="castle" size={16} /> The Steed and its trappings</h2>
+      <dl class="spec-table">
+        {steedSpecs.map(([k, v]) => (
+          <div class="spec-row">
+            <dt class="plaque">{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <h3 class="ws-sub">the potion shelf</h3>
+      <p class="ui-label">software consumed daily, by the vial:</p>
+      <ul class="shelf">
+        {shelf.map(({ name, rune }) => (
+          <li class="vial">
+            <span class="vial-stopper {rune}" aria-hidden="true"></span>
+            {name}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <hr class="scroll-divider big" />
+
+    <section class="sketchpad-sec" aria-label="Pixel sketchpad">
+      <h2 class="ws-title"><PixelIcon name="quill" size={16} /> The sketchpad</h2>
+      <p class="ui-label">
+        a working tool of the workshop — paint with the kingdom's palette, then let it go.
+      </p>
+      <div class="pad-controls">
+        {palette.map(([name, hex]) => (
+          <button
+            class="swatch"
+            type="button"
+            data-color={hex}
+            style={`--sw: ${hex}`}
+            aria-label={`paint with ${name}`}
+            title={name}
+          ></button>
+        ))}
+        <button class="pixel-btn small" type="button" data-erase>erase</button>
+        <button class="pixel-btn small" type="button" data-clear>clear vellum</button>
+      </div>
+      <div class="pad" data-pad role="img" aria-label="A 16 by 16 pixel sketchpad"></div>
+      <p class="pad-note ui-label">✦ the vellum keeps nothing — refresh and it forgets, like a good workshop table.</p>
+    </section>
+
+    <PageFooter updated="1 Sep 2026" />
+  </Window>
+</BaseLayout>
+
+<style>
+  .ws-title {
+    font-size: var(--text-2xl);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ws-sub {
+    font-size: var(--text-xl);
+    margin-top: 1.1rem;
+  }
+
+  .spec-table {
+    margin: 0.6rem 0 0;
+    border: 2px solid var(--ink);
+    background: var(--parchment-aged);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark), inset -2px -2px 0 var(--bevel-light);
+  }
+
+  .spec-row {
+    display: grid;
+    grid-template-columns: minmax(7rem, 10rem) 1fr;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.45rem 0.7rem;
+  }
+
+  .spec-row + .spec-row {
+    border-top: 2px dashed var(--bevel-dark);
+  }
+
+  .spec-row dd {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .shelf {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .vial {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    background: var(--parchment);
+    border: 2px solid var(--ink);
+    padding: 0.2rem 0.55rem;
+  }
+
+  .vial-stopper {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border: 1px solid var(--ink);
+  }
+
+  .vial-stopper.forge { background: var(--ember); }
+  .vial-stopper.ink { background: var(--gold); }
+  .vial-stopper.song { background: var(--magic); }
+
+  .scroll-divider.big {
+    margin-block: 1.4rem;
+  }
+
+  .pad-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin-top: 0.7rem;
+  }
+
+  .swatch {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--ink);
+    background: var(--sw);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .swatch[aria-pressed="true"] {
+    outline: 3px dashed var(--ember);
+    outline-offset: 1px;
+  }
+
+  .pad {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    width: min(100%, 26rem);
+    aspect-ratio: 1;
+    margin-top: 0.8rem;
+    background: var(--parchment);
+    border: 3px solid var(--gold);
+    outline: 2px solid var(--ink);
+    box-shadow: 4px 4px 0 rgb(0 0 0 / 0.35);
+    touch-action: none;
+  }
+
+  .pad-cell {
+    border: 1px dashed rgb(42 33 24 / 0.12);
+  }
+
+  .pad-cell:hover {
+    border-color: rgb(42 33 24 / 0.35);
+  }
+
+  .pad-note {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+  }
+</style>
+
+<script>
+  const pad = document.querySelector<HTMLElement>('[data-pad]');
+  if (pad) {
+    // build the vellum
+    for (let i = 0; i < 16 * 16; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'pad-cell';
+      cell.dataset.i = String(i);
+      pad.appendChild(cell);
+    }
+
+    let brush = '#2a2118';
+    let painting = false;
+
+    const paint = (cell: HTMLElement) => {
+      cell.style.background = brush;
+      cell.dataset.painted = brush;
+    };
+
+    pad.querySelectorAll<HTMLElement>('.pad-cell').forEach((cell) => {
+      cell.addEventListener('pointerdown', (e) => {
+        painting = true;
+        paint(cell);
+        e.preventDefault();
+      });
+      cell.addEventListener('pointerenter', () => {
+        if (painting) paint(cell);
+      });
+    });
+    window.addEventListener('pointerup', () => {
+      painting = false;
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.swatch').forEach((btn) => {
+      btn.setAttribute('aria-pressed', btn.dataset.color === brush ? 'true' : 'false');
+      btn.addEventListener('click', () => {
+        brush = btn.dataset.color ?? '#2a2118';
+        document.querySelectorAll('.swatch').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
+
+    document.querySelector<HTMLButtonElement>('[data-erase]')?.addEventListener('click', () => {
+      brush = '';
+    });
+
+    document.querySelector<HTMLButtonElement>('[data-clear]')?.addEventListener('click', () => {
+      pad.querySelectorAll<HTMLElement>('.pad-cell').forEach((cell) => {
+        cell.style.background = '';
+        delete cell.dataset.painted;
+      });
+    });
+  }
+</script>

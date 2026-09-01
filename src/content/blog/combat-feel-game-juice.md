@@ -3,6 +3,7 @@ title: 'Devlog #2 — Combat feel and game juice'
 description: 'Screen shake, hitstop, and knockback: three cheap tricks that made the placeholder enemy satisfying to fight.'
 pubDate: 2026-05-02
 draft: false
+lang: 'EN'
 ---
 
 The placeholder enemy from last devlog got a health bar, a hurt state, and an

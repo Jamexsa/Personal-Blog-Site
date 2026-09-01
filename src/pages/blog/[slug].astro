@@ -28,6 +28,7 @@ const minutes = readingTimeMinutes(post.body ?? '');
       <header class="tome-header">
         <p class="tome-meta">
           <FormattedDate date={post.data.pubDate} />
+          {post.data.lang && <span class="lang-rune">{post.data.lang}</span>}
           <span aria-hidden="true">·</span>
           <span>{minutes} min read by candlelight</span>
         </p>
@@ -70,6 +71,16 @@ const minutes = readingTimeMinutes(post.body ?? '');
     font-family: var(--font-ui);
     font-size: 0.95rem;
     color: var(--ink-soft);
+  }
+
+  .lang-rune {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: var(--indigo);
+    color: var(--gold-bright);
+    padding: 0 5px;
+    border: 1px solid var(--ink);
   }
 
   .tome-header h1 {

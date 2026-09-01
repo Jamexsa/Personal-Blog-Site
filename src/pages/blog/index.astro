@@ -1,29 +1,104 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
 import BlogList from '../../components/BlogList.astro';
 import { getSortedPosts } from '../../lib/posts';
 
 const posts = await getSortedPosts();
+
+// "Now at the forge" — the newest game still in development.
+const games = await getCollection('games');
+const atTheForge = games
+  .filter(({ data }) => data.status === 'in-development')
+  .sort(
+    (a, b) =>
+      (b.data.releaseDate?.valueOf() ?? 0) - (a.data.releaseDate?.valueOf() ?? 0)
+  )[0];
 ---
 
 <BaseLayout title="Blog" description="The Grimoire — a devlog of game development, art studies, and process.">
   <Window title="The Wizard's Grimoire — devlog" icon="tome" x={230} y={16} width={760} class="grimoire">
-    <header class="grimoire-header">
-      <h1>Grimoire</h1>
-      <p class="ui-label">
-        {posts.length > 0
-          ? `${posts.length} ${posts.length === 1 ? 'entry' : 'entries'} inscribed, newest first.`
-          : 'the pages are yet blank.'}
+    <SectionBanner text="Grimoire" sub="the devlog — where the making is written down" />
+
+    <section class="about-grimoire" aria-label="About this grimoire">
+      <h2 class="about-title">About this grimoire</h2>
+      <p>
+        Entries on game-feel, palette studies, prototypes, and the small
+        victories between placeholder rectangles. The wizard writes in
+        <span class="plaque">EN</span> mostly, sometimes
+        <span class="plaque">IT</span> — each scroll carries its rune.
       </p>
-    </header>
+      {atTheForge && (
+        <p class="forge-line">
+          <span class="banner-tag forge">NOW AT THE FORGE</span>
+          <span>{atTheForge.data.title}{atTheForge.data.description ? ` — ${atTheForge.data.description}` : ''}</span>
+        </p>
+      )}
+    </section>
+
     <hr class="scroll-divider" />
+    <p class="ui-label">
+      {posts.length > 0
+        ? `${posts.length} ${posts.length === 1 ? 'entry' : 'entries'} inscribed, newest first.`
+        : 'the pages are yet blank.'}
+    </p>
     <BlogList {posts} />
+
+    <PageFooter updated="1 Sep 2026" />
   </Window>
 </BaseLayout>
 
 <style>
-  .grimoire-header h1 {
-    font-size: var(--text-4xl);
+  .about-grimoire {
+    margin-top: 0.2rem;
+  }
+
+  .about-title {
+    font-size: var(--text-2xl);
+    margin-bottom: 0.3rem;
+  }
+
+  .about-grimoire p {
+    max-width: 62ch;
+    color: var(--ink-soft);
+  }
+
+  .about-grimoire .plaque {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .forge-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+    border-top: 2px dashed var(--bevel-dark);
+  }
+
+  .forge-line span:last-child {
+    color: var(--ink);
+  }
+
+  .banner-tag {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 1px 8px;
+    border: 1px solid var(--ink);
+    color: var(--parchment);
+    background: var(--ember);
+    animation: forgeblink 1.4s steps(2, end) infinite;
+  }
+
+  @keyframes forgeblink {
+    50% { opacity: 0.6; }
   }
 </style>

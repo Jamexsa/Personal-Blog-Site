@@ -1,0 +1,144 @@
+---
+import { render, getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('journal', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+  return entries.map((entry, i) => ({
+    params: { id: entry.id },
+    props: {
+      entry,
+      newer: entries[i - 1] ?? null,
+      older: entries[i + 1] ?? null,
+    },
+  }));
+}
+
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
+const { data } = entry;
+---
+
+<BaseLayout title={data.title} description={`A diary page — ${data.title}`}>
+  <Window title={`Diary — ${data.title}`} icon="quill" x={230} y={16} width={640} class="diary-entry">
+    <SectionBanner text="Diary" sub="the squire writes it all down" />
+
+    <article>
+      <header class="entry-header">
+        <p class="entry-meta">
+          <FormattedDate date={data.date} />
+          {data.mood && <span class="mood-seal">☾ {data.mood}</span>}
+          {data.weather && <span>☂ {data.weather}</span>}
+          {data.location && <span>✦ {data.location}</span>}
+        </p>
+        <h1 class="entry-title">{data.title}</h1>
+      </header>
+
+      {data.photo && (
+        <img
+          class="entry-photo"
+          src={data.photo.replace(/\/600\/380$/, '/300/190')}
+          alt={`A small keepsake photo — ${data.title}`}
+          width="300"
+          height="190"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {(newer || older) && (
+        <nav class="page-nav" aria-label="Diary navigation">
+          {newer ? (
+            <a class="pixel-btn" href={`/journal/${newer.id}/`}>◀ newer page</a>
+          ) : (
+            <span />
+          )}
+          {older ? (
+            <a class="pixel-btn" href={`/journal/${older.id}/`}>older page ▶</a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )}
+    </article>
+
+    <PageFooter updated={data.date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} />
+  </Window>
+</BaseLayout>
+
+<style>
+  .entry-header {
+    padding-bottom: 0.8rem;
+    border-bottom: 2px dashed var(--bevel-dark);
+  }
+
+  .entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+
+  .mood-seal {
+    background: var(--indigo);
+    color: var(--gold-bright);
+    border: 1px solid var(--ink);
+    padding: 0 6px;
+  }
+
+  .entry-title {
+    font-size: var(--text-3xl);
+    margin-top: 0.3rem;
+  }
+
+  .entry-photo {
+    width: 100%;
+    max-width: 300px;
+    float: right;
+    margin: 0.5rem 0 0.9rem 1.1rem;
+    border: 3px solid var(--gold);
+    outline: 2px solid var(--ink);
+    image-rendering: pixelated;
+  }
+
+  .prose {
+    max-width: 62ch;
+    margin-top: 0.9rem;
+    clear: none;
+  }
+
+  .prose :global(p) {
+    margin-block: 0.65rem;
+  }
+
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 1.5rem;
+    padding-top: 0.9rem;
+    border-top: 2px dashed var(--bevel-dark);
+    clear: both;
+  }
+
+  @media (max-width: 40rem) {
+    .entry-photo {
+      float: none;
+      margin: 0.9rem 0;
+      max-width: 100%;
+    }
+  }
+</style>

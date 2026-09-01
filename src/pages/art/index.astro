@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { getCollection } from 'astro:content';
 
@@ -11,8 +13,8 @@ const pieces = (await getCollection('art')).sort(
 
 <BaseLayout title="Art" description="The Jester's Gallery — illustrations, studies, and sketches of the realm.">
   <Window title="The Jester's Gallery — art & studies" icon="jester" x={230} y={16} width={760} class="gallery">
+    <SectionBanner text="Gallery" sub="the jester hangs what the brush has wrought" />
     <header class="gallery-header">
-      <h1>Gallery</h1>
       <p class="ui-label">
         {pieces.length > 0
           ? `${pieces.length} ${pieces.length === 1 ? 'piece' : 'pieces'} hung, newest first.`
@@ -47,12 +49,13 @@ const pieces = (await getCollection('art')).sort(
         ))}
       </div>
     )}
+    <PageFooter updated="1 Sep 2026" />
   </Window>
 </BaseLayout>
 
 <style>
-  .gallery-header h1 {
-    font-size: var(--text-4xl);
+  .gallery-header .ui-label {
+    margin-top: 0.2rem;
   }
 
   /* masonry walls */

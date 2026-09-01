@@ -1,72 +1,110 @@
 ---
 import Window from './Window.astro';
 import PixelIcon from './PixelIcon.astro';
-import { navLinks } from './nav-links';
+import { navGroups } from './nav-links';
 
 type IconName = Parameters<typeof PixelIcon>[0]['name'];
 const sectionIcons: Record<string, IconName> = {
   '/': 'castle',
   '/blog/': 'tome',
+  '/journal/': 'quill',
   '/games/': 'shield',
   '/art/': 'jester',
+  '/workspace/': 'hammer',
+  '/shrines/': 'chest',
+  '/radio/': 'note',
+  '/resources/': 'bag',
+  '/guestbook/': 'tankard',
   '/about/': 'lute',
 };
 
 const sectionTitles: Record<string, string> = {
   '/': 'The Keep',
   '/blog/': 'Grimoire',
+  '/journal/': "Squire's Diary",
   '/games/': 'Deeds',
   '/art/': 'Gallery',
+  '/workspace/': 'Workshop',
+  '/shrines/': 'Reliquary',
+  '/radio/': "Bard's Radio",
+  '/resources/': "Merchant's Stock",
+  '/guestbook/': "Inn's Ledger",
   '/about/': 'The Bard',
 };
 
 const currentPath = Astro.url.pathname;
+const sectionPath = (href: string) => href.replace(/\/$/, '');
 const currentKey =
-  navLinks.find(
-    ({ href }) => href !== '/' && currentPath.startsWith(href.replace(/\/$/, ''))
-  )?.href ?? '/';
+  Object.keys(sectionTitles).find(
+    (href) => href !== '/' && currentPath.startsWith(sectionPath(href))
+  ) ?? '/';
 ---
 
 <Window title="The Tavern" icon="banner" variant="stone" x={16} y={16} width={190} class="tavern">
   <nav aria-label="Sections of the realm">
-    <ul>
-      {navLinks.map(({ label, href }) => {
-        const isActive =
-          href === '/' ? currentPath === '/' : currentPath.startsWith(href.replace(/\/$/, ''));
-        return (
-          <li>
-            <a href={href} class:list={{ active: isActive }} aria-current={isActive ? 'page' : undefined}>
-              <PixelIcon name={sectionIcons[href] ?? 'star'} size={14} />
-              <span class="tavern-label">{label}</span>
-              {isActive && <span class="here" aria-hidden="true">◄</span>}
-            </a>
-          </li>
-        );
-      })}
-    </ul>
+    {navGroups.map(({ label, items }) => (
+      <section class="tavern-group">
+        <p class="tavern-group-label">{label}</p>
+        <ul>
+          {items.map(({ label: itemLabel, href }) => {
+            const isActive =
+              href === '/' ? currentPath === '/' : currentPath.startsWith(sectionPath(href));
+            return (
+              <li>
+                <a href={href} class:list={{ active: isActive }} aria-current={isActive ? 'page' : undefined}>
+                  <PixelIcon name={sectionIcons[href] ?? 'star'} size={14} />
+                  <span class="tavern-label">{itemLabel}</span>
+                  {isActive && <span class="here" aria-hidden="true">◄</span>}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
   </nav>
   <p class="tavern-note">— {sectionTitles[currentKey]} —</p>
 </Window>
 
 <style>
-  .tavern ul {
+  .tavern nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: min(62vh, 34rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .tavern-group-label {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    margin: 0 0 3px;
+    padding: 0 2px;
+  }
+
+  .tavern-group > ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
 
   .tavern a {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 6px;
+    padding: 3px 5px;
     color: var(--parchment);
     text-decoration: none;
     font-family: var(--font-ui);
-    font-size: 1.05rem;
+    font-size: 1rem;
     border: 2px solid transparent;
   }
 

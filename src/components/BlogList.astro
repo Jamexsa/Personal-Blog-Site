@@ -18,6 +18,7 @@ const { posts } = Astro.props;
         <article class="entry">
           <span class="entry-date">
             <FormattedDate date={data.pubDate} />
+            {data.lang && <span class="lang-rune">{data.lang}</span>}
             {i === 0 && <span class="new">NEW</span>}
           </span>
           <div class="entry-main">
@@ -70,6 +71,17 @@ const { posts } = Astro.props;
     padding: 0 6px;
     border: 1px solid var(--ink);
     animation: newblink 1.2s steps(2, end) infinite;
+  }
+
+  .lang-rune {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: var(--indigo);
+    color: var(--gold-bright);
+    padding: 0 5px;
+    border: 1px solid var(--ink);
   }
 
   @keyframes newblink {

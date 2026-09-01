@@ -4,6 +4,9 @@ import Window from '../components/Window.astro';
 import Badge88 from '../components/Badge88.astro';
 import PixelIcon from '../components/PixelIcon.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import AlliesList from '../components/AlliesList.astro';
+import DecreesList from '../components/DecreesList.astro';
+import CoinFountain from '../components/CoinFountain.astro';
 import { getSortedPosts } from '../lib/posts';
 
 const posts = await getSortedPosts();
@@ -23,6 +26,11 @@ const recent = posts.slice(0, 3);
       <a class="pixel-btn" href="/games/"><PixelIcon name="shield" size={14} /> View my deeds</a>
       <a class="pixel-btn" href="/blog/"><PixelIcon name="tome" size={14} /> Read the grimoire</a>
     </div>
+    <p class="new-wings ui-label">
+      ✦ new wings open: the <a href="/journal/">diary</a>, the
+      <a href="/shrines/">reliquary</a>, the <a href="/radio/">radio</a>, and the
+      <a href="/guestbook/">ledger</a> awaits thy mark.
+    </p>
   </Window>
 
   <Window title="The Bard's music box" icon="lute" x={790} y={16} width={300} class="musicbox">
@@ -34,14 +42,24 @@ const recent = posts.slice(0, 3);
       <span></span><span></span><span></span><span></span><span></span>
     </div>
     <p class="mb-note">the bard is on a break — the lute hums to itself</p>
+    <a class="pixel-btn small" href="/radio/"><PixelIcon name="note" size={14} /> tune the radio</a>
   </Window>
 
   <Window title="Guest ledger" icon="raven" x={230} y={430} width={260} class="ledger">
     <div class="lcd lcd-counter">GUESTS: 00427</div>
+    <div class="lcd-counters" aria-label="Visitor counters (placeholders)">
+      <span class="lcd">TODAY: 00013</span>
+      <span class="lcd">ONLINE: 00001</span>
+    </div>
     <p class="ledger-note">thy visit hath been recorded in the ledger of the realm.</p>
+    <CoinFountain />
+    <a class="ledger-sign pixel-btn small" href="/guestbook/">
+      <PixelIcon name="tankard" size={14} /> sign the inn's ledger
+    </a>
   </Window>
 
   <Window title="Chronicle — latest from the Grimoire" icon="tome" x={515} y={430} width={330} class="chronicle">
+    <p class="lcd announce">✦ KINGDOMOS v1.1 — THE NEW WINGS ARE OPEN ✦</p>
     {recent.length > 0 ? (
       <ul class="chronicle-list">
         {recent.map(({ id, data }, i) => (
@@ -66,6 +84,14 @@ const recent = posts.slice(0, 3);
       <Badge88 label="Est. 2026" field="#2a2118" charge="#7fe07f" pattern="plain" />
     </div>
     <p class="ledger-note">best viewed by candlelight, 800×600</p>
+  </Window>
+
+  <Window title="Royal decrees" icon="shield" x={515} y={890} width={330} variant="stone" class="decrees-win">
+    <DecreesList />
+  </Window>
+
+  <Window title="Allies at court" icon="banner" x={875} y={660} width={215} variant="stone" class="allies-win">
+    <AlliesList />
   </Window>
 </BaseLayout>
 
@@ -99,6 +125,11 @@ const recent = posts.slice(0, 3);
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 1rem;
+  }
+
+  .new-wings {
+    margin-top: 0.9rem;
+    font-size: 0.9rem;
   }
 
   /* music box */
@@ -140,6 +171,11 @@ const recent = posts.slice(0, 3);
     to { height: 26px; }
   }
 
+  .musicbox .pixel-btn.small {
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+
   .mb-note,
   .ledger-note {
     margin-top: 8px;
@@ -153,7 +189,35 @@ const recent = posts.slice(0, 3);
     letter-spacing: 0.12em;
   }
 
+  .lcd-counters {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .lcd-counters .lcd {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+  }
+
+  .ledger-sign {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+
   /* chronicle */
+  .announce {
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+    animation: announceblink 2.2s steps(2, end) infinite;
+  }
+
+  @keyframes announceblink {
+    50% { opacity: 0.65; }
+  }
+
   .chronicle-list {
     list-style: none;
     margin: 0;

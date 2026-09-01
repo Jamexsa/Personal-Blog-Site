@@ -1,0 +1,101 @@
+---
+import PixelIcon from './PixelIcon.astro';
+
+/**
+ * Allies at Court — the buddy-list window. Placeholder allies; swap the
+ * hrefs for friends' sites as banners are traded.
+ */
+const allies = {
+  online: [
+    { name: 'pixelwitch', href: '#', icon: 'star' },
+    { name: 'maerwen', href: '#', icon: 'moon' },
+  ],
+  offline: [
+    { name: 'quiet_fen', href: '#', icon: 'raven' },
+    { name: 'the forge friend', href: '#', icon: 'hammer' },
+    { name: 'swan herald', href: '#', icon: 'banner' },
+  ],
+} as const;
+---
+
+<ul class="allies">
+  <li class="allies-group">online</li>
+  {allies.online.map(({ name, href, icon }) => (
+    <li>
+      <a href={href}>
+        <PixelIcon name={icon} size={12} />
+        <span class="ally-name">{name}</span>
+        <span class="dot on" aria-hidden="true"></span>
+      </a>
+    </li>
+  ))}
+  <li class="allies-group">away at court</li>
+  {allies.offline.map(({ name, href, icon }) => (
+    <li>
+      <a href={href}>
+        <PixelIcon name={icon} size={12} />
+        <span class="ally-name">{name}</span>
+        <span class="dot" aria-hidden="true"></span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .allies {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+  }
+
+  .allies-group {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.7rem;
+    color: var(--magic);
+    margin: 6px 0 2px;
+  }
+
+  .allies li:first-child .allies-group {
+    margin-top: 0;
+  }
+
+  .allies a {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 4px;
+    color: var(--parchment);
+    text-decoration: none;
+  }
+
+  .allies a:hover {
+    color: var(--gold-bright);
+    background: var(--stone-dark);
+  }
+
+  .ally-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border: 1px solid var(--ink);
+    background: var(--stone-dark);
+  }
+
+  .dot.on {
+    background: var(--magic);
+    box-shadow: 0 0 5px rgb(127 224 127 / 0.7);
+  }
+</style>

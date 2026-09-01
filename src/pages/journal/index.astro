@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Window from '../../components/Window.astro';
+import SectionBanner from '../../components/SectionBanner.astro';
+import PageFooter from '../../components/PageFooter.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+// Newest first; drafts hidden like the Grimoire does.
+const entries = (await getCollection('journal', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout
+  title="Journal"
+  description="The Squire's Diary — small personal entries from life in and around the keep."
+>
+  <Window title="The Squire's Diary — personal journal" icon="quill" x={230} y={16} width={760} class="diary">
+    <SectionBanner
+      text="Diary"
+      sub="the devlog is for the work; this one is for the days"
+    />
+
+    <p class="ui-label">
+      {entries.length > 0
+        ? `${entries.length} ${entries.length === 1 ? 'page' : 'pages'} written, newest first.`
+        : 'the diary is yet unopened.'}
+    </p>
+    <hr class="scroll-divider" />
+
+    {entries.length === 0 ? (
+      <p class="empty">No pages yet — the squire is out living something worth writing down.</p>
+    ) : (
+      <ul class="diary-list">
+        {entries.map(({ id, data }) => (
+          <li class="diary-page">
+            <a class="diary-link" href={`/journal/${id}/`}>
+              <article>
+                <p class="diary-meta">
+                  <FormattedDate date={data.date} />
+                  {data.mood && <span class="mood-seal">☾ {data.mood}</span>}
+                  {data.weather && <span class="weather-rune">☂ {data.weather}</span>}
+                  {data.location && <span class="loc-rune">✦ {data.location}</span>}
+                </p>
+                <h2 class="diary-title">{data.title}</h2>
+              </article>
+            </a>
+            <span class="sparkle s1" aria-hidden="true">✦</span>
+            <span class="sparkle s2" aria-hidden="true">✧</span>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <PageFooter updated="1 Sep 2026" />
+  </Window>
+</BaseLayout>
+
+<style>
+  .empty {
+    color: var(--ink-soft);
+  }
+
+  .diary-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .diary-page {
+    position: relative;
+    background: var(--parchment-aged);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 var(--bevel-dark), inset -2px -2px 0 var(--bevel-light);
+    padding: 0.8rem 0.9rem;
+    transition: transform 120ms steps(2, end);
+  }
+
+  .diary-page:hover {
+    transform: translate(-2px, -2px);
+  }
+
+  .diary-link {
+    text-decoration: none;
+    display: block;
+  }
+
+  .diary-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  .mood-seal {
+    background: var(--indigo);
+    color: var(--gold-bright);
+    border: 1px solid var(--ink);
+    padding: 0 6px;
+  }
+
+  .weather-rune,
+  .loc-rune {
+    color: var(--ink-soft);
+  }
+
+  .diary-title {
+    font-size: var(--text-2xl);
+    margin-top: 0.25rem;
+    color: var(--ink);
+  }
+
+  .diary-page:hover .diary-title {
+    color: var(--ember-deep);
+  }
+
+  /* little pixel-sparkle decorations, pinned to the page corners */
+  .sparkle {
+    position: absolute;
+    font-size: 0.8rem;
+    color: var(--gold);
+    opacity: 0.8;
+    animation: sparkleblink 2.4s steps(2, end) infinite;
+  }
+
+  .sparkle.s1 {
+    top: 4px;
+    right: 10px;
+  }
+
+  .sparkle.s2 {
+    bottom: 4px;
+    right: 26px;
+    animation-delay: 1.1s;
+    color: var(--ember);
+  }
+
+  @keyframes sparkleblink {
+    50% { opacity: 0.25; }
+  }
+</style>
