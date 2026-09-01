@@ -83,6 +83,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           const pinned = win.hasAttribute('data-pinned');
           const btn = document.createElement('button');
           btn.type = 'button';
+          btn.className = 'sb-win-btn';
           btn.dataset.winId = id;
           btn.textContent = win.dataset.shortTitle ?? id;
           if (pinned) btn.classList.add('pinned');
