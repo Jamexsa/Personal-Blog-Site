@@ -55,10 +55,11 @@ const bannerSnippet = `<a href="${bannerHref}"><img src="${bannerHref}banner-88x
 
 <BaseLayout
   title="About"
+  scene="about"
   description="The Bard's tale — who I am, what I make, how this keep is built, and how to send a raven."
 >
-  <Window title="The Bard's Tale — about the author" icon="lute" x={230} y={16} width={640} class="bard">
-    <SectionBanner text="The Bard" sub="the webmaster, the squire, and the knight are all the same person" frame="cartouche" />
+  <Window title="The Bard's Tale — about the author" icon="lute" x={230} y={16} width={640} frame="round" trim="brazilwood" class="bard">
+    <SectionBanner text="The Bard" sub="the webmaster, the squire, and the knight are all the same person" frame="cartouche" wing="inn" />
 
     <section class="bio" aria-label="About the author">
       <img
@@ -79,9 +80,9 @@ const bannerSnippet = `<a href="${bannerHref}"><img src="${bannerHref}banner-88x
         </ul>
         <p>
           Placeholder tale: an independent game developer and artist making
-          small, weird games about places and the feelings they hold. By day a
-          wanderer of engines; by night a painter of small worlds by
-          candlelight.
+          <span class="hand">small, weird games</span> about places and the
+          feelings they hold. By day a wanderer of engines; by night a painter
+          of small worlds by candlelight.
         </p>
         <p>
           I care about game feel, restrained palettes, and finishing the ugly

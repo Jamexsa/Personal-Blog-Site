@@ -1,6 +1,9 @@
 ---
 import PixelIcon from './PixelIcon.astro';
 
+type Frame = 'classic' | 'arch' | 'chamfer' | 'scroll' | 'round';
+type Trim = 'gold' | 'azurite' | 'verdigris' | 'brazilwood' | 'moon';
+
 interface Props {
   title: string;
   icon?: Parameters<typeof PixelIcon>[0]['name'];
@@ -9,10 +12,24 @@ interface Props {
   y?: number;
   width?: number;
   variant?: 'parchment' | 'stone';
+  /** corner shape family (M8): classic / arch / chamfer / scroll / round */
+  frame?: Frame;
+  /** trim color used by corner pieces + title underline */
+  trim?: Trim;
   class?: string;
 }
 
-const { title, icon, x, y, width, variant = 'parchment', class: className = '' } = Astro.props;
+const {
+  title,
+  icon,
+  x,
+  y,
+  width,
+  variant = 'parchment',
+  frame = 'classic',
+  trim = 'gold',
+  class: className = '',
+} = Astro.props;
 
 const style = [
   x !== undefined && `--win-x: ${x}px`,
@@ -25,7 +42,12 @@ const style = [
 const placed = x !== undefined ? 'placed' : '';
 ---
 
-<section class={`win ${variant} ${placed} ${className}`} {style} data-x={x ?? undefined}>
+<section
+  class:list={['win', variant, frame, placed, className]}
+  data-x={x ?? undefined}
+  data-trim={trim}
+  {style}
+>
   <header class="win-title" data-drag-handle>
     {icon && <PixelIcon name={icon} size={16} />}
     <span class="win-title-text">{title}</span>
@@ -37,6 +59,10 @@ const placed = x !== undefined ? 'placed' : '';
   <div class="win-body">
     <slot />
   </div>
+  <span class="corner c-tl" aria-hidden="true"></span>
+  <span class="corner c-tr" aria-hidden="true"></span>
+  <span class="corner c-bl" aria-hidden="true"></span>
+  <span class="corner c-br" aria-hidden="true"></span>
 </section>
 
 <style>
@@ -45,4 +71,17 @@ const placed = x !== undefined ? 'placed' : '';
     gap: 4px;
     flex: none;
   }
+
+  .corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .c-tl { top: -2px; left: -2px; }
+  .c-tr { top: -2px; right: -2px; }
+  .c-bl { bottom: -2px; left: -2px; }
+  .c-br { bottom: -2px; right: -2px; }
 </style>

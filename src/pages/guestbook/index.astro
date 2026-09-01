@@ -17,18 +17,20 @@ const innkeeperMail = 'hello@example.com';
 
 <BaseLayout
   title="Guestbook"
+  scene="guestbook"
   description="The Inn's Ledger — leave a mark, a song, and a recommendation for the innkeeper."
 >
-  <Window title="The Inn's Ledger — sign the book" icon="tankard" x={230} y={16} width={760} class="ledger-win">
+  <Window title="The Inn's Ledger — sign the book" icon="tankard" x={230} y={16} width={760} frame="round" trim="brazilwood" class="ledger-win">
     <SectionBanner
       text="Ledger"
       sub={`${entries.length} ${entries.length === 1 ? 'signature' : 'signatures'} in the inn's book`}
+      wing="inn"
     />
 
     <section class="signing" aria-label="Sign the ledger">
       <h2 class="sign-title">Dip the quill</h2>
       <p class="ui-label">
-        the innkeeper transcribes every raven by hand into the ledger below.
+        the innkeeper transcribes every raven <span class="hand">by hand</span> into the ledger below.
       </p>
       <form class="sign-form" data-sign-form data-mail={innkeeperMail}>
         <div class="field-row">

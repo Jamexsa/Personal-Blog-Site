@@ -1,10 +1,12 @@
 ---
 import '@fontsource/jacquard-12';
+import '@fontsource/jacquard-24';
 import '@fontsource/vt323';
 import '@fontsource/pixelify-sans/400.css';
 import '@fontsource/pixelify-sans/600.css';
 import '../styles/global.css';
 import Desktop from '../components/Desktop.astro';
+import type { SceneName } from '../components/Scenes.astro';
 import Tavern from '../components/Tavern.astro';
 import Marquee from '../components/Marquee.astro';
 import StatusBar from '../components/StatusBar.astro';
@@ -14,12 +16,15 @@ interface Props {
   description?: string;
   /** Social/OG image; replace the default with a branded 1200×630 asset later. */
   image?: string;
+  /** which wallpaper scene this page lives under (M8) */
+  scene?: SceneName;
 }
 
 const {
   title,
   description = 'A game developer and artist of the realm — games, art, and the devlog grimoire.',
   image = 'https://picsum.photos/seed/og-fallback/1200/630',
+  scene = 'home',
 } = Astro.props;
 
 const siteName = 'Your Name';
@@ -46,7 +51,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <title>{fullTitle}</title>
   </head>
   <body>
-    <Desktop>
+    <Desktop scene={scene}>
       <Tavern />
       <slot />
     </Desktop>

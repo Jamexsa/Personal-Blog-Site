@@ -1,0 +1,700 @@
+---
+/**
+ * The eleven subjects of the realm — one pixel-art scene per page.
+ * Rendered inside Desktop.astro's wallpaper layer; every scene sits
+ * bottom-anchored and center, over the shared night sky.
+ *
+ * All art original: rect-stepped silhouettes, crispEdges, no bitmaps.
+ */
+export type SceneName =
+  | 'home'
+  | 'blog'
+  | 'journal'
+  | 'games'
+  | 'art'
+  | 'workspace'
+  | 'shrines'
+  | 'radio'
+  | 'resources'
+  | 'guestbook'
+  | 'about';
+
+interface Props {
+  scene: SceneName;
+}
+
+const { scene } = Astro.props;
+
+/* ---------- generated pixel circle rows (for the moons) ---------- */
+function moonRows(r: number) {
+  const c = r; // viewBox is (2r)x(2r)
+  const rows: { y: number; x0: number; w: number }[] = [];
+  for (let y = 0; y < 2 * r; y++) {
+    const dy = y - c + 0.5;
+    const half = Math.sqrt(Math.max(r * r - dy * dy, 0));
+    const x0 = Math.round(c - half);
+    const x1 = Math.round(c + half);
+    if (x1 - x0 > 0) rows.push({ y, x0, w: x1 - x0 });
+  }
+  return rows;
+}
+
+const moon = moonRows(13);
+const smallMoon = moonRows(8);
+
+/* craters on the big moon: {x,y,w,h} */
+const craters = [
+  { x: 12, y: 8, w: 4, h: 3 },
+  { x: 17, y: 14, w: 5, h: 4 },
+  { x: 8, y: 17, w: 3, h: 2 },
+  { x: 19, y: 7, w: 2, h: 2 },
+];
+/* rim light on the upper-left of the big moon */
+const rimLight = [
+  { x: 4, y: 8, w: 2, h: 6 },
+  { x: 6, y: 6, w: 2, h: 3 },
+  { x: 8, y: 4, w: 5, h: 2 },
+];
+
+const ink = '#0d0a16';
+const stone = '#171130';
+const stone2 = '#1e1740';
+const hill = '#141021';
+const warm = '#ff5a36';
+const goldL = '#e8c558';
+const teal = '#7fd8c9';
+---
+
+<!-- ============ HOME — enchanted night: moon + castle 2.0 ============ -->
+{scene === 'home' && (
+  <>
+    <div class="big-moon" aria-hidden="true">
+      <svg viewBox="0 0 26 26" shape-rendering="crispEdges">
+        {moon.map((row) => (
+          <rect x={row.x0} y={row.y} width={row.w} height="1" fill="#e8dcbc" />
+        ))}
+        {craters.map((c) => (
+          <rect x={c.x} y={c.y} width={c.w} height={c.h} fill="#cbb98f" />
+        ))}
+        {rimLight.map((c) => (
+          <rect x={c.x} y={c.y} width={c.w} height={c.h} fill="#fbf4e0" />
+        ))}
+      </svg>
+    </div>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="aurora echo" aria-hidden="true"></div>
+    <div class="comet" aria-hidden="true"></div>
+    <div class="comet c2" aria-hidden="true"></div>
+    <div class="raven-fly" aria-hidden="true">
+      <svg viewBox="0 0 10 4" shape-rendering="crispEdges">
+        <rect x="3" y="1" width="4" height="1" fill={ink} />
+        <rect x="6" y="0" width="2" height="1" fill={ink} />
+        <rect x="2" y="2" width="3" height="1" fill={ink} />
+        <rect x="0" y="1" width="2" height="1" fill={ink} />
+      </svg>
+    </div>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <!-- hill -->
+      <path d="M0 190 L0 158 L70 136 L150 148 L235 122 L320 138 L400 126 L480 152 L480 190 Z" fill={hill} />
+      <!-- trees on the hill -->
+      <rect x="92" y="128" width="3" height="12" fill={ink} />
+      <rect x="88" y="120" width="11" height="9" fill={stone} />
+      <rect x="368" y="118" width="3" height="12" fill={ink} />
+      <rect x="364" y="110" width="11" height="9" fill={stone} />
+      <!-- outer walls -->
+      <rect x="150" y="92" width="46" height="72" fill={ink} />
+      <rect x="284" y="92" width="46" height="72" fill={ink} />
+      <!-- gatehouse -->
+      <rect x="196" y="110" width="88" height="54" fill={stone} />
+      <path d="M196 110 h12 v-8 h12 v8 h12 v-8 h12 v8 h12 v-8 h12 v8 h12 v-8 h12 v8 h4 v6 h-88 Z" fill={stone2} />
+      <!-- gate -->
+      <rect x="226" y="128" width="26" height="36" fill="#080610" />
+      <rect x="230" y="134" width="7" height="9" fill={warm} class="light" />
+      <!-- keep -->
+      <rect x="206" y="66" width="68" height="92" fill={ink} />
+      <path d="M206 66 h10 v-8 h10 v8 h9 v-8 h10 v8 h9 v-8 h10 v8 h10 v6 h-68 Z" fill={stone2} />
+      <!-- side towers with conical stepped roofs -->
+      <rect x="144" y="76" width="16" height="88" fill={stone} />
+      <path d="M143 76 h18 l-9 -22 Z" fill={stone2} />
+      <rect x="320" y="76" width="16" height="88" fill={stone} />
+      <path d="M319 76 h18 l-9 -22 Z" fill={stone2} />
+      <!-- lit windows -->
+      <rect x="214" y="78" width="6" height="9" fill={warm} class="light" />
+      <rect x="258" y="92" width="6" height="9" fill={goldL} class="light slow" />
+      <rect x="160" y="98" width="6" height="9" fill={goldL} />
+      <rect x="304" y="98" width="6" height="9" fill={warm} class="light" />
+      <rect x="166" y="120" width="6" height="9" fill={goldL} class="light slow" />
+      <rect x="298" y="120" width="6" height="9" fill={warm} class="light" />
+      <!-- banner poles -->
+      <rect x="238" y="46" width="2" height="20" fill={stone2} />
+      <path d="M240 46 h14 v9 l-7 4 -7 -4 Z" fill="#c23a1e" />
+      <rect x="330" y="52" width="2" height="16" fill={stone2} />
+      <path d="M332 52 h11 v7 l-5.5 3 -5.5 -3 Z" fill="#2a4d8f" />
+    </svg>
+  </>
+)}
+
+<!-- ============ BLOG — the wizard's tower ============ -->
+{scene === 'blog' && (
+  <>
+    <!-- constellation quill, drawn in stars -->
+    <svg class="constellation" viewBox="0 0 90 110" shape-rendering="crispEdges" aria-hidden="true">
+      <rect x="40" y="6" width="3" height="3" fill={goldL} />
+      <rect x="34" y="22" width="2" height="2" fill="#f4ead0" />
+      <rect x="42" y="34" width="3" height="3" fill={goldL} />
+      <rect x="52" y="48" width="2" height="2" fill="#f4ead0" />
+      <rect x="60" y="62" width="3" height="3" fill={goldL} />
+      <rect x="66" y="78" width="2" height="2" fill="#f4ead0" />
+      <rect x="70" y="94" width="3" height="3" fill={goldL} />
+      <path d="M41 8 L35 23 L43 35 L53 49 L61 63 L67 79 L71 95" fill="none" stroke="rgb(232 197 88 / 0.25)" stroke-width="1" />
+    </svg>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 168 L110 150 L240 162 L370 148 L480 164 L480 190 Z" fill={hill} />
+      <!-- tower body, tapering -->
+      <rect x="216" y="52" width="48" height="106" fill={ink} />
+      <rect x="224" y="40" width="32" height="14" fill={stone} />
+      <path d="M222 40 h36 l-18 -26 Z" fill={stone2} />
+      <!-- the lit study window -->
+      <rect x="232" y="66" width="12" height="16" fill={goldL} class="light" />
+      <rect x="236" y="66" width="1" height="16" fill={ink} />
+      <!-- tiny balcony -->
+      <rect x="228" y="84" width="24" height="3" fill={stone2} />
+      <rect x="230" y="80" width="2" height="4" fill={stone2} />
+      <rect x="248" y="80" width="2" height="4" fill={stone2} />
+      <!-- annexe -->
+      <rect x="262" y="112" width="34" height="46" fill={stone} />
+      <path d="M262 112 h8 v-7 h8 v7 h8 v-7 h8 v7 h2 v5 h-34 Z" fill={stone2} />
+      <rect x="272" y="124" width="6" height="8" fill={warm} class="light slow" />
+      <!-- moon, small -->
+      <g transform="translate(392, 66)">
+        {smallMoon.map((row) => (
+          <rect x={row.x0} y={row.y} width={row.w} height="1" fill="#e8dcbc" />
+        ))}
+        <rect x="8" y="7" width="3" height="3" fill="#cbb98f" />
+        <rect x="11" y="11" width="3" height="2" fill="#cbb98f" />
+      </g>
+    </svg>
+  </>
+)}
+
+<!-- ============ JOURNAL — crescent over rooftops ============ -->
+{scene === 'journal' && (
+  <>
+    <svg class="crescent" viewBox="0 0 20 24" shape-rendering="crispEdges" aria-hidden="true">
+      {moonRows(10).map((row) => (
+        <rect
+          x={row.x0}
+          y={row.y}
+          width={Math.max(Math.round(row.w * 0.55), 1)}
+          height="1"
+          fill="#e8dcbc"
+        />
+      ))}
+    </svg>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 170 L240 156 L480 170 L480 190 Z" fill={hill} />
+      <!-- rooftops -->
+      <rect x="48" y="128" width="70" height="40" fill={ink} />
+      <path d="M44 128 L83 106 L122 128 Z" fill={stone} />
+      <rect x="150" y="140" width="58" height="28" fill={stone} />
+      <path d="M146 140 L179 122 L212 140 Z" fill={ink} />
+      <rect x="238" y="118" width="76" height="50" fill={ink} />
+      <path d="M234 118 L276 94 L318 118 Z" fill={stone2} />
+      <rect x="346" y="134" width="64" height="34" fill={stone} />
+      <path d="M342 134 L378 114 L414 134 Z" fill={ink} />
+      <!-- chimneys -->
+      <rect x="104" y="112" width="8" height="18" fill={ink} />
+      <rect x="286" y="98" width="8" height="22" fill={ink} />
+      <!-- one warm window + one candle window -->
+      <rect x="70" y="140" width="9" height="11" fill={goldL} class="light slow" />
+      <rect x="258" y="132" width="9" height="11" fill={warm} class="light" />
+      <rect x="366" y="146" width="8" height="10" fill="#f4ead0" />
+      <!-- smoke wisp anchor -->
+      <rect x="288" y="90" width="4" height="6" fill={stone2} class="smoke-wisp" />
+    </svg>
+  </>
+)}
+
+<!-- ============ GAMES — twin banners at dusk ============ -->
+{scene === 'games' && (
+  <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+    <path d="M0 190 L0 156 L120 134 L240 150 L360 128 L480 150 L480 190 Z" fill={hill} />
+    <!-- crossed poles on the crest -->
+    <rect x="196" y="64" width="5" height="70" fill={ink} transform="rotate(-8 198 99)" />
+    <rect x="278" y="64" width="5" height="70" fill={ink} transform="rotate(8 281 99)" />
+    <!-- pennants -->
+    <path d="M186 68 L226 76 L216 90 L224 102 L188 96 Z" fill="#c23a1e" />
+    <path d="M293 68 L254 76 L264 90 L256 102 L291 96 Z" fill="#2a4d8f" />
+    <!-- shield plaque between them -->
+    <rect x="230" y="86" width="20" height="24" fill={stone2} />
+    <rect x="230" y="86" width="20" height="6" fill={goldL} />
+    <rect x="236" y="96" width="8" height="8" fill="#c23a1e" />
+    <!-- brazier torches at the base -->
+    <rect x="176" y="120" width="6" height="18" fill={stone} />
+    <rect x="173" y="114" width="12" height="7" fill={warm} class="light" />
+    <rect x="298" y="120" width="6" height="18" fill={stone} />
+    <rect x="295" y="114" width="12" height="7" fill={warm} class="light slow" />
+  </svg>
+)}
+
+<!-- ============ ART — the floating easel hill ============ -->
+{scene === 'art' && (
+  <>
+    <div class="aurora pastel" aria-hidden="true"></div>
+    <div class="aurora pastel echo" aria-hidden="true"></div>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 150 L140 122 L260 142 L380 118 L480 144 L480 190 Z" fill={hill} />
+      <!-- easel -->
+      <rect x="214" y="96" width="4" height="58" fill={ink} />
+      <rect x="258" y="96" width="4" height="58" fill={ink} />
+      <rect x="234" y="118" width="4" height="36" fill={stone2} />
+      <rect x="222" y="66" width="34" height="34" fill="#2b2350" />
+      <rect x="226" y="70" width="26" height="26" fill="#39306b" />
+      <!-- a painting on the canvas: tiny landscape -->
+      <rect x="229" y="73" width="20" height="8" fill={teal} />
+      <rect x="229" y="81" width="20" height="12" fill="#c9a227" />
+      <rect x="233" y="76" width="3" height="3" fill="#f4ead0" />
+      <!-- palette resting on the hill -->
+      <rect x="286" y="132" width="22" height="12" fill={stone2} />
+      <rect x="290" y="128" width="4" height="4" fill={teal} />
+      <rect x="297" y="127" width="4" height="4" fill="#c23a1e" />
+      <rect x="303" y="128" width="4" height="4" fill={goldL} />
+    </svg>
+  </>
+)}
+
+<!-- ============ WORKSPACE — the forge ============ -->
+{scene === 'workspace' && (
+  <>
+    <div class="forge-glow" aria-hidden="true"></div>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 160 L180 138 L320 150 L480 140 L480 190 Z" fill={hill} />
+      <!-- forge structure -->
+      <rect x="286" y="86" width="52" height="64" fill={ink} />
+      <path d="M282 86 L312 62 L342 86 Z" fill={stone2} />
+      <rect x="298" y="108" width="22" height="18" fill={warm} class="light" />
+      <!-- chimney with heat -->
+      <rect x="322" y="58" width="10" height="26" fill={stone} />
+      <!-- anvil -->
+      <rect x="212" y="132" width="30" height="8" fill={stone2} />
+      <rect x="222" y="140" width="10" height="10" fill={ink} />
+      <rect x="216" y="150" width="22" height="5" fill={stone} />
+      <!-- quench barrel -->
+      <rect x="164" y="138" width="16" height="18" fill={stone} />
+      <rect x="164" y="136" width="16" height="4" fill={teal} />
+    </svg>
+  </>
+)}
+
+<!-- ============ SHRINES — the votive arch ============ -->
+{scene === 'shrines' && (
+  <>
+    <div class="veil" aria-hidden="true"></div>
+    <div class="comet violet" aria-hidden="true"></div>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 162 L240 146 L480 162 L480 190 Z" fill={hill} />
+      <!-- stone arch -->
+      <rect x="192" y="84" width="18" height="66" fill={stone} />
+      <rect x="270" y="84" width="18" height="66" fill={stone} />
+      <path d="M192 88 q0 -34 48 -34 q48 0 48 34 l-12 0 q0 -22 -36 -22 q-36 0 -36 22 Z" fill={stone2} />
+      <!-- keystone gem -->
+      <rect x="236" y="50" width="8" height="8" fill="#7fe07f" class="light slow" />
+      <!-- votive stones at the base -->
+      <rect x="176" y="146" width="10" height="8" fill={stone2} />
+      <rect x="294" y="146" width="10" height="8" fill={stone2} />
+      <rect x="180" y="144" width="3" height="3" fill={goldL} class="light" />
+      <rect x="298" y="144" width="3" height="3" fill={goldL} class="light" />
+    </svg>
+  </>
+)}
+
+<!-- ============ RADIO — the antenna tower ============ -->
+{scene === 'radio' && (
+  <>
+    <div class="ripple r1" aria-hidden="true"></div>
+    <div class="ripple r2" aria-hidden="true"></div>
+    <div class="ripple r3" aria-hidden="true"></div>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 166 L240 152 L480 166 L480 190 Z" fill={hill} />
+      <!-- mast -->
+      <rect x="236" y="42" width="8" height="112" fill={ink} />
+      <path d="M228 60 L236 76 L236 60 Z" fill={stone2} />
+      <rect x="228" y="58" width="24" height="4" fill={stone2} />
+      <rect x="230" y="74" width="20" height="4" fill={stone2} />
+      <rect x="232" y="90" width="16" height="4" fill={stone2} />
+      <rect x="234" y="106" width="12" height="4" fill={stone2} />
+      <!-- beacon -->
+      <rect x="237" y="36" width="6" height="5" fill={warm} class="light" />
+      <!-- little broadcast hut -->
+      <rect x="258" y="128" width="34" height="26" fill={stone} />
+      <rect x="266" y="136" width="8" height="9" fill={goldL} class="light slow" />
+      <!-- moon -->
+      <g transform="translate(80, 52)">
+        {smallMoon.map((row) => (
+          <rect x={row.x0} y={row.y} width={row.w} height="1" fill="#e8dcbc" />
+        ))}
+        <rect x="7" y="8" width="3" height="3" fill="#cbb98f" />
+      </g>
+    </svg>
+  </>
+)}
+
+<!-- ============ RESOURCES — the town on the trade road ============ -->
+{scene === 'resources' && (
+  <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+    <path d="M0 190 L0 158 L240 142 L480 158 L480 190 Z" fill={hill} />
+    <!-- skyline -->
+    <rect x="52" y="112" width="34" height="40" fill={ink} />
+    <path d="M50 112 L69 96 L88 112 Z" fill={stone2} />
+    <rect x="100" y="126" width="28" height="26" fill={stone} />
+    <rect x="140" y="104" width="30" height="48" fill={ink} />
+    <path d="M138 104 L155 88 L172 104 Z" fill={stone2} />
+    <rect x="182" y="120" width="26" height="32" fill={stone} />
+    <rect x="322" y="110" width="34" height="42" fill={ink} />
+    <path d="M320 110 L339 94 L358 110 Z" fill={stone2} />
+    <rect x="368" y="124" width="28" height="28" fill={stone} />
+    <rect x="406" y="102" width="30" height="50" fill={ink} />
+    <path d="M404 102 L421 86 L438 102 Z" fill={stone2} />
+    <!-- scattered lit windows -->
+    <rect x="60" y="122" width="6" height="8" fill={goldL} class="light slow" />
+    <rect x="74" y="132" width="6" height="8" fill={warm} class="light" />
+    <rect x="148" y="116" width="6" height="8" fill={goldL} />
+    <rect x="154" y="130" width="6" height="8" fill="#f4ead0" />
+    <rect x="330" y="120" width="6" height="8" fill={goldL} class="light" />
+    <rect x="342" y="134" width="6" height="8" fill={warm} class="light slow" />
+    <rect x="414" y="114" width="6" height="8" fill={goldL} />
+    <!-- trade road -->
+    <path d="M204 190 L232 152 L248 152 L276 190 Z" fill={stone} />
+    <rect x="238" y="168" width="3" height="3" fill={goldL} />
+    <rect x="246" y="176" width="3" height="3" fill={goldL} />
+  </svg>
+)}
+
+<!-- ============ GUESTBOOK — the inn with the lantern garland ============ -->
+{scene === 'guestbook' && (
+  <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+    <path d="M0 190 L0 164 L240 150 L480 164 L480 190 Z" fill={hill} />
+    <!-- garland string with lanterns -->
+    <path d="M60 64 Q240 100 420 64" fill="none" stroke={stone2} stroke-width="3" />
+    <rect x="126" y="86" width="7" height="9" fill={goldL} class="light" />
+    <rect x="236" y="98" width="7" height="9" fill={warm} class="light slow" />
+    <rect x="346" y="86" width="7" height="9" fill={goldL} class="light" />
+    <!-- inn facade -->
+    <rect x="170" y="104" width="140" height="60" fill={ink} />
+    <path d="M164 104 L240 74 L316 104 Z" fill={stone2} />
+    <rect x="176" y="98" width="8" height="8" fill={stone} />
+    <rect x="296" y="98" width="8" height="8" fill={stone} />
+    <!-- warm door + windows -->
+    <rect x="230" y="132" width="20" height="32" fill={goldL} class="light slow" />
+    <rect x="230" y="132" width="20" height="4" fill={stone2} />
+    <rect x="192" y="118" width="16" height="14" fill={warm} class="light" />
+    <rect x="272" y="118" width="16" height="14" fill={warm} class="light slow" />
+    <!-- hanging sign -->
+    <rect x="316" y="108" width="2" height="12" fill={stone2} />
+    <rect x="310" y="120" width="16" height="12" fill={stone2} />
+    <rect x="315" y="124" width="6" height="5" fill={goldL} />
+  </svg>
+)}
+
+<!-- ============ ABOUT — the bard's campfire ============ -->
+{scene === 'about' && (
+  <>
+    <div class="big-moon small" aria-hidden="true">
+      <svg viewBox="0 0 26 26" shape-rendering="crispEdges">
+        {moon.map((row) => (
+          <rect x={row.x0} y={row.y} width={row.w} height="1" fill="#e8dcbc" />
+        ))}
+        {craters.slice(0, 2).map((c) => (
+          <rect x={c.x} y={c.y} width={c.w} height={c.h} fill="#cbb98f" />
+        ))}
+      </svg>
+    </div>
+    <svg class="subject" viewBox="0 0 480 190" preserveAspectRatio="xMidYMax meet" shape-rendering="crispEdges">
+      <path d="M0 190 L0 160 L180 140 L320 152 L480 142 L480 190 Z" fill={hill} />
+      <!-- campfire logs -->
+      <rect x="216" y="152" width="34" height="6" fill={stone2} transform="rotate(-6 233 155)" />
+      <rect x="216" y="152" width="34" height="6" fill={stone2} transform="rotate(6 233 155)" />
+      <!-- flames -->
+      <g class="flame">
+        <rect x="228" y="136" width="10" height="14" fill={warm} />
+        <rect x="230" y="130" width="6" height="8" fill={goldL} />
+        <rect x="231" y="124" width="3" height="6" fill="#f4ead0" />
+      </g>
+      <!-- the lute leaning on a stump -->
+      <rect x="280" y="128" width="14" height="10" fill={stone} />
+      <rect x="286" y="102" width="3" height="26" fill="#a06a2a" />
+      <rect x="284" y="96" width="7" height="7" fill="#c9a227" />
+      <!-- bedroll -->
+      <rect x="176" y="146" width="26" height="8" fill={stone2} />
+      <rect x="176" y="144" width="26" height="4" fill="#2a4d8f" />
+    </svg>
+  </>
+)}
+
+<style>
+  /* subjects share placement; everything bottom-anchored like the old castle */
+  .subject {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 880px);
+    height: auto;
+    opacity: 0.95;
+  }
+
+  .light {
+    animation: flicker 3.5s steps(2, end) infinite;
+  }
+
+  .light.slow {
+    animation-duration: 5.5s;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  /* the big pixel moon + halo */
+  .big-moon {
+    position: absolute;
+    top: 6vh;
+    right: 8vw;
+    width: clamp(120px, 16vw, 190px);
+    animation: moonbreathe 7s ease-in-out infinite;
+  }
+
+  .big-moon svg {
+    width: 100%;
+    height: auto;
+    filter:
+      drop-shadow(0 0 18px rgb(244 234 208 / 0.35))
+      drop-shadow(0 0 60px rgb(244 234 208 / 0.16));
+  }
+
+  .big-moon.small {
+    width: clamp(90px, 11vw, 130px);
+    top: 8vh;
+    right: 10vw;
+  }
+
+  @keyframes moonbreathe {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.12); }
+  }
+
+  .crescent {
+    position: absolute;
+    top: 9vh;
+    right: 12vw;
+    width: clamp(70px, 8vw, 100px);
+    filter: drop-shadow(0 0 14px rgb(244 234 208 / 0.3));
+  }
+
+  .constellation {
+    position: absolute;
+    top: 8vh;
+    right: 10vw;
+    width: clamp(90px, 10vw, 130px);
+    animation: twinkle-soft 4s steps(2, end) infinite;
+  }
+
+  @keyframes twinkle-soft {
+    50% { opacity: 0.6; }
+  }
+
+  .smoke-wisp {
+    animation: smoketrail 6s linear infinite;
+  }
+
+  @keyframes smoketrail {
+    0% { opacity: 0.7; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-26px); }
+  }
+
+  .flame {
+    animation: flameflicker 1.1s steps(3, end) infinite;
+    transform-origin: 233px 152px;
+  }
+
+  @keyframes flameflicker {
+    0% { transform: scaleY(1) scaleX(1); }
+    33% { transform: scaleY(0.88) scaleX(1.06); }
+    66% { transform: scaleY(1.06) scaleX(0.95); }
+    100% { transform: scaleY(1) scaleX(1); }
+  }
+
+  /* ---------- aurora ribbons (home + art) ---------- */
+  .aurora {
+    position: absolute;
+    top: 4vh;
+    left: -12%;
+    width: 75%;
+    height: 130px;
+    background: linear-gradient(
+      100deg,
+      transparent,
+      rgb(127 216 201 / 0.14) 25%,
+      rgb(127 216 201 / 0.2) 45%,
+      rgb(232 197 88 / 0.1) 65%,
+      transparent
+    );
+    filter: blur(14px);
+    transform: skewY(-4deg);
+    animation: aurorasway 18s ease-in-out infinite alternate;
+  }
+
+  .aurora.echo {
+    top: 12vh;
+    left: 30%;
+    width: 70%;
+    height: 90px;
+    opacity: 0.6;
+    animation-duration: 24s;
+    animation-direction: alternate-reverse;
+  }
+
+  .aurora.pastel {
+    background: linear-gradient(
+      100deg,
+      transparent,
+      rgb(233 168 216 / 0.16) 30%,
+      rgb(127 216 201 / 0.16) 55%,
+      rgb(232 197 88 / 0.1) 75%,
+      transparent
+    );
+  }
+
+  @keyframes aurorasway {
+    from { transform: skewY(-4deg) translateX(-2%); }
+    to { transform: skewY(-6deg) translateX(3%); }
+  }
+
+  /* ---------- comets (home + shrines) ---------- */
+  .comet {
+    position: absolute;
+    top: 12vh;
+    left: -6%;
+    width: 90px;
+    height: 3px;
+    transform-origin: left center;
+    transform: rotate(24deg);
+    background: linear-gradient(90deg, transparent, #f4ead0 70%, #f4ead0);
+    opacity: 0;
+    animation: cometfly 14s linear infinite;
+  }
+
+  .comet.c2 {
+    top: 26vh;
+    animation-delay: 8s;
+    animation-duration: 17s;
+  }
+
+  .comet.violet {
+    background: linear-gradient(90deg, transparent, #b493e8 70%, #e9dcff);
+    animation-duration: 19s;
+  }
+
+  @keyframes cometfly {
+    0% { opacity: 0; translate: 0 0; }
+    3% { opacity: 0.9; }
+    12% { opacity: 0; translate: 60vw 26vh; }
+    100% { opacity: 0; translate: 60vw 26vh; }
+  }
+
+  /* ---------- the gliding raven (home) ---------- */
+  .raven-fly {
+    position: absolute;
+    top: 16vh;
+    left: -4%;
+    width: 34px;
+    animation: ravenglide 46s linear infinite;
+    opacity: 0.8;
+  }
+
+  .raven-fly svg {
+    width: 100%;
+    height: auto;
+    animation: ravenflap 0.7s steps(2, end) infinite alternate;
+  }
+
+  @keyframes ravenglide {
+    0% { transform: translateX(0) translateY(0); }
+    48% { transform: translateX(55vw) translateY(4vh); }
+    100% { transform: translateX(110vw) translateY(-2vh); }
+  }
+
+  @keyframes ravenflap {
+    from { transform: scaleY(1); }
+    to { transform: scaleY(0.6); }
+  }
+
+  /* ---------- shrine veil + workspace forge glow + radio ripples ---------- */
+  .veil {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 30%, rgb(180 147 232 / 0.08), transparent 60%),
+      linear-gradient(to bottom, rgb(60 42 110 / 0.12), transparent 45%);
+  }
+
+  .forge-glow {
+    position: absolute;
+    left: 50%;
+    bottom: -30px;
+    width: 60vw;
+    height: 34vh;
+    transform: translateX(-50%);
+    background: radial-gradient(
+      ellipse at 50% 100%,
+      rgb(255 90 54 / 0.22),
+      rgb(255 90 54 / 0.08) 45%,
+      transparent 70%
+    );
+    animation: forgepulse 5s ease-in-out infinite;
+  }
+
+  @keyframes forgepulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  .ripple {
+    position: absolute;
+    /* anchored on the antenna beacon (subject is centered, bottom-anchored) */
+    bottom: calc(min(92vw, 880px) * 0.3);
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgb(232 197 88 / 0.5);
+    border-radius: 50%;
+    animation: ripplering 5s ease-out infinite;
+  }
+
+  .ripple.r2 { animation-delay: 1.6s; }
+  .ripple.r3 { animation-delay: 3.2s; }
+
+  @keyframes ripplering {
+    0% { transform: scale(0.3); opacity: 0.8; }
+    100% { transform: scale(14); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aurora,
+    .comet,
+    .raven-fly,
+    .raven-fly svg,
+    .forge-glow,
+    .ripple,
+    .big-moon {
+      animation: none;
+    }
+
+    .comet,
+    .raven-fly {
+      display: none;
+    }
+  }
+</style>

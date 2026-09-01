@@ -39,6 +39,7 @@
 
   /* Typography */
   --font-display: 'Jacquard 12', 'Comic Sans MS', cursive;
+  --font-display-lg: 'Jacquard 24', 'Jacquard 12', 'Comic Sans MS', cursive;
   --font-body: 'VT323', 'Courier New', monospace;
   --font-ui: 'Pixelify Sans', 'VT323', monospace;
 
@@ -106,6 +107,29 @@ p {
   max-width: 70ch;
 }
 
+/* VT323 cannot render true bold — give emphasis a real weight change */
+strong {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.95em;
+  color: var(--ink);
+}
+
+/* a word in the speaker's own hand — tilt + blackletter voice */
+.hand {
+  font-family: var(--font-display);
+  font-size: 1.35em;
+  line-height: 0;
+  display: inline-block;
+  transform: rotate(-2deg);
+  color: var(--ember-deep);
+  text-shadow: 1px 1px 0 rgb(232 197 88 / 0.35);
+}
+
+/* hand-placed tilts for plaques, badges and captions */
+.tilt-l { display: inline-block; transform: rotate(-1deg); }
+.tilt-r { display: inline-block; transform: rotate(1.2deg); }
+
 a {
   color: var(--link);
   text-decoration: underline;
@@ -144,7 +168,7 @@ body::after {
   background: repeating-linear-gradient(
     to bottom,
     transparent 0 2px,
-    rgb(0 0 0 / 0.10) 2px 3px
+    rgb(0 0 0 / 0.08) 2px 3px
   );
   mix-blend-mode: multiply;
 }
@@ -244,6 +268,8 @@ body::before {
   padding: 0.2rem 0.4rem 0.2rem 0.6rem;
   background: linear-gradient(90deg, var(--indigo), #2b2350 70%, var(--indigo));
   border-bottom: 2px solid var(--ink);
+  /* trim hairline under the title bar, tinted per window */
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--trim-color, var(--gold)) 55%, transparent);
   color: var(--gold-bright);
   font-family: var(--font-ui);
   font-size: 1rem;
@@ -429,6 +455,199 @@ body::before {
 
   .win.ffix .win-title {
     border-bottom: 3px double var(--gold);
+  }
+}
+
+/* ============================================================
+   M8 — window frame families: not every window is a rectangle
+   ============================================================ */
+
+/* trim colors (title hairline + corner pieces) */
+.win[data-trim='gold']       { --trim-color: var(--gold); }
+.win[data-trim='azurite']    { --trim-color: var(--azurite); }
+.win[data-trim='verdigris']  { --trim-color: var(--verdigris); }
+.win[data-trim='brazilwood'] { --trim-color: var(--brazilwood); }
+.win[data-trim='moon']       { --trim-color: var(--moon); }
+
+/* classic — parchment rectangle with gold pixel caps (the default keep) */
+.win.classic .corner {
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  box-shadow: inset 2px 2px 0 var(--gold-bright);
+}
+
+.win.classic .c-tr,
+.win.classic .c-br {
+  box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.3);
+}
+
+/* arch — manuscript page: rounded top, azurite petal dots */
+.win.arch {
+  border-radius: 18px 18px 3px 3px;
+}
+
+.win.arch .win-title {
+  border-radius: 15px 15px 0 0;
+}
+
+.win.arch .corner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--azurite);
+  border: 2px solid var(--ink);
+  box-shadow: inset 2px 2px 0 rgb(255 250 230 / 0.3);
+}
+
+.win.arch .c-tl { top: 5px; left: 6px; }
+.win.arch .c-tr { top: 5px; right: 6px; }
+
+/* chamfer — 45° cut corners, gold diamond rivets (guildhall / FFIX) */
+.win.chamfer {
+  clip-path: polygon(
+    14px 0, calc(100% - 14px) 0,
+    100% 14px, 100% calc(100% - 14px),
+    calc(100% - 14px) 100%, 14px 100%,
+    0 calc(100% - 14px), 0 14px
+  );
+  /* clip-path eats box-shadows — use filter for the drop instead */
+  filter: drop-shadow(5px 5px 0 rgb(0 0 0 / 0.45));
+}
+
+.win.chamfer .corner {
+  width: 10px;
+  height: 10px;
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  transform: rotate(45deg);
+  box-shadow: inset 2px 2px 0 var(--gold-bright);
+}
+
+.win.chamfer .c-tl { top: 2px; left: 2px; }
+.win.chamfer .c-tr { top: 2px; right: 2px; }
+.win.chamfer .c-bl { bottom: 2px; left: 2px; }
+.win.chamfer .c-br { bottom: 2px; right: 2px; }
+
+.win.chamfer .win-title {
+  margin: 0 6px;
+}
+
+/* scroll — bowed feet with verdigris curls (wanderer's wing) */
+.win.scroll {
+  border-radius: 0 0 16px 16px;
+}
+
+.win.scroll .win-title {
+  border-bottom-width: 2px;
+}
+
+.win.scroll .c-tl,
+.win.scroll .c-tr {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--verdigris);
+  border: 2px solid var(--ink);
+}
+
+.win.scroll .c-bl,
+.win.scroll .c-br {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--verdigris);
+  background: transparent;
+}
+
+.win.scroll .c-bl {
+  border-radius: 0 0 0 12px;
+  border-top: 0;
+  border-right: 0;
+}
+
+.win.scroll .c-br {
+  border-radius: 0 0 12px 0;
+  border-top: 0;
+  border-left: 0;
+}
+
+/* round — the inn: soft corners with brazilwood wax seals */
+.win.round {
+  border-radius: 16px;
+}
+
+.win.round .win-title {
+  border-radius: 13px 13px 0 0;
+}
+
+.win.round .corner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff7a5a, var(--brazilwood) 70%);
+  border: 2px solid var(--ink);
+  box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.3);
+}
+
+.win.round .c-tl { top: 3px; left: 4px; }
+.win.round .c-tr { top: 3px; right: 4px; }
+.win.round .c-bl { bottom: 3px; left: 4px; }
+.win.round .c-br { bottom: 3px; right: 4px; }
+
+/* ============================================================
+   M8 — typography with life
+   ============================================================ */
+
+/* gradient display headings, per wing */
+.heading-moon-gold,
+.heading-teal-gold,
+.heading-ember-warm {
+  font-family: var(--font-display-lg);
+  line-height: 1;
+}
+
+.heading-moon-gold {
+  background: linear-gradient(180deg, var(--moon) 15%, var(--gold-bright) 55%, var(--gold) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 0.55));
+}
+
+.heading-teal-gold {
+  background: linear-gradient(180deg, #7fd8c9 15%, var(--gold-bright) 60%, var(--gold) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 0.55));
+}
+
+.heading-ember-warm {
+  background: linear-gradient(180deg, #ff9a7a 5%, var(--ember) 45%, var(--ember-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 0.4));
+}
+
+.heading-gold-hard {
+  font-family: var(--font-display-lg);
+  color: var(--gold-bright);
+  text-shadow: 3px 3px 0 var(--indigo), 5px 5px 0 rgb(0 0 0 / 0.45);
+}
+
+/* text that breathes */
+.floaty {
+  animation: textbob 6s ease-in-out infinite;
+}
+
+@keyframes textbob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floaty {
+    animation: none;
   }
 }
 

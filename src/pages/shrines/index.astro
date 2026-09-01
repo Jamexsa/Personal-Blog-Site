@@ -14,13 +14,15 @@ const sealed = shrines.filter(({ data }) => data.status === 'sealed');
 
 <BaseLayout
   title="Shrines"
+  scene="shrines"
   description="The Reliquary — fan shrines for the games, films, and books this realm holds dear."
 >
-  <Window title="The Reliquary — fan shrines" icon="chest" x={230} y={16} width={760} class="reliquary">
+  <Window title="The Reliquary — fan shrines" icon="chest" x={230} y={16} width={760} frame="scroll" trim="verdigris" class="reliquary">
     <SectionBanner
       text="Reliquary"
       sub="small temples for the things that shaped the realm"
       frame="cartouche"
+      wing="wanderer"
     />
 
     <p class="ui-label">

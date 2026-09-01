@@ -6,16 +6,26 @@
  *
  * frame="plain"     — the classic night band with pixel flourishes
  * frame="cartouche" — scrolled side flourishes, like an antique map title
+ * wing              — heading treatment per wing (gradient voice, M8)
  * dither            — checkerboard blend overlay (PSX era texture)
  */
 interface Props {
   text: string;
   sub?: string;
   frame?: 'plain' | 'cartouche';
+  wing?: 'home' | 'scriptorium' | 'guildhall' | 'wanderer' | 'inn';
   dither?: boolean;
 }
 
-const { text, sub, frame = 'plain', dither = false } = Astro.props;
+const { text, sub, frame = 'plain', wing = 'home', dither = false } = Astro.props;
+
+const wingClass: Record<string, string> = {
+  home: 'heading-moon-gold',
+  scriptorium: 'heading-moon-gold',
+  guildhall: 'heading-gold-hard',
+  wanderer: 'heading-teal-gold',
+  inn: 'heading-ember-warm',
+};
 
 // 8×20 pixel scroll/volute for the cartouche sides (mirrored for the right).
 const scrollGrid = [
@@ -62,7 +72,7 @@ scrollGrid.forEach((row, y) => {
   )}
   <div class="banner-middle">
     <p class="banner-flourish" aria-hidden="true">✦ ✦ ✦</p>
-    <h1 class="banner-word">{text}</h1>
+    <h1 class:list={['banner-word floaty', wingClass[wing]]}>{text}</h1>
     {sub && <p class="banner-sub">{sub}</p>}
   </div>
   {frame === 'cartouche' && (
@@ -116,8 +126,6 @@ scrollGrid.forEach((row, y) => {
   .banner-word {
     font-size: var(--text-4xl);
     line-height: 1;
-    color: var(--gold-bright);
-    text-shadow: 3px 3px 0 rgb(0 0 0 / 0.55);
     margin: 0.15rem 0 0.1rem;
   }
 

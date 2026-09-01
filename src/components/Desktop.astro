@@ -1,50 +1,61 @@
 ---
-// The kingdom's desktop: night wallpaper (stars, moon, castle, fog)
-// plus the pointer-drag wiring for all placed windows.
+// The kingdom's desktop — a scene engine. Every page gets the shared
+// night-sky foundation (dithered bands, dense stars) tinted per scene,
+// plus its own subject (Scenes.astro) and signature motes.
+import Scenes, { type SceneName } from './Scenes.astro';
+
+interface Props {
+  scene?: SceneName;
+}
+
+const { scene = 'home' } = Astro.props;
+
+/* per-scene sky tint + signature motes (color / mode / count) */
+const sceneCfg: Record<
+  SceneName,
+  { tint: string; horizon: string; mote: string; moteAlt: string; mode: 'drift' | 'rise' | 'float'; count: number }
+> = {
+  home:      { tint: '#1a1440', horizon: '#3a2a5e', mote: '#e8c558', moteAlt: '#f4ead0', mode: 'drift',  count: 9 },
+  blog:      { tint: '#141a3a', horizon: '#2c3a6e', mote: '#7fe07f', moteAlt: '#e8c558', mode: 'float', count: 8 },
+  journal:   { tint: '#241a33', horizon: '#4e3054', mote: '#f4ead0', moteAlt: '#e8c558', mode: 'float', count: 7 },
+  games:     { tint: '#2a1626', horizon: '#6e2a1e', mote: '#ff5a36', moteAlt: '#e8c558', mode: 'rise',  count: 8 },
+  art:       { tint: '#1f1a44', horizon: '#4a3a7e', mote: '#7fd8c9', moteAlt: '#e9a8d8', mode: 'float', count: 10 },
+  workspace: { tint: '#261420', horizon: '#7e3a1e', mote: '#ff5a36', moteAlt: '#e8c558', mode: 'rise',  count: 9 },
+  shrines:   { tint: '#1c1440', horizon: '#3e2a6e', mote: '#7fe07f', moteAlt: '#e8c558', mode: 'rise',  count: 8 },
+  radio:     { tint: '#12183a', horizon: '#2a3a6e', mote: '#e8c558', moteAlt: '#7fd8c9', mode: 'float', count: 8 },
+  resources: { tint: '#161a36', horizon: '#38406e', mote: '#e8c558', moteAlt: '#f4ead0', mode: 'drift', count: 7 },
+  guestbook: { tint: '#221a30', horizon: '#5e4030', mote: '#e8c558', moteAlt: '#ff5a36', mode: 'drift', count: 7 },
+  about:     { tint: '#1a1438', horizon: '#4e3a5e', mote: '#ff5a36', moteAlt: '#e8c558', mode: 'rise',  count: 8 },
+};
+
+const cfg = sceneCfg[scene];
+const motes = Array.from({ length: cfg.count }, (_, i) => ({
+  left: 6 + ((i * 37) % 88), // spread pseudo-randomly but stable
+  top: 52 + ((i * 23) % 38), // lower half of the sky
+  delay: (i * 0.9) % 6,
+  dur: 6 + ((i * 1.7) % 5),
+  alt: i % 3 === 2,
+}));
 ---
 
-<div class="wallpaper" aria-hidden="true">
+<div
+  class="wallpaper"
+  data-scene={scene}
+  style={`--scene-tint: ${cfg.tint}; --scene-horizon: ${cfg.horizon};`}
+  aria-hidden="true"
+>
+  <div class="sky"></div>
   <div class="stars"></div>
-  <div class="moon"></div>
-  <svg
-    class="castle"
-    viewBox="0 0 480 180"
-    preserveAspectRatio="xMidYMax meet"
-    shape-rendering="crispEdges"
-  >
-    <!-- distant hill -->
-    <path
-      d="M0 180 L0 150 L60 128 L140 140 L220 118 L300 132 L390 122 L480 148 L480 180 Z"
-      fill="#171130"
-    />
-    <!-- castle keep -->
-    <g fill="#0d0a16">
-      <rect x="196" y="60" width="88" height="90" />
-      <rect x="188" y="52" width="24" height="98" />
-      <rect x="268" y="52" width="24" height="98" />
-      <rect x="150" y="86" width="46" height="64" />
-      <rect x="284" y="86" width="46" height="64" />
-      <rect x="140" y="78" width="16" height="72" />
-      <rect x="324" y="78" width="16" height="72" />
-      <!-- battlements -->
-      <path d="M196 60 h12 v-8 h12 v8 h10 v-8 h12 v8 h10 v-8 h12 v8 h10 v-8 h12 v8 h8 v6 h-88 Z" />
-      <path d="M188 52 h8 v-7 h8 v7 h8 v6 h-24 Z" />
-      <path d="M268 52 h8 v-7 h8 v7 h8 v6 h-24 Z" />
-      <!-- gate -->
-      <rect x="228" y="118" width="24" height="32" fill="#080610" />
-      <path d="M228 118 h24 v10 h-24 Z" fill="#080610" />
-    </g>
-    <!-- lit windows -->
-    <rect x="204" y="72" width="6" height="9" fill="#ff5a36" class="light" />
-    <rect x="262" y="88" width="6" height="9" fill="#ff5a36" class="light slow" />
-    <rect x="160" y="96" width="6" height="9" fill="#c9a227" />
-    <rect x="300" y="96" width="6" height="9" fill="#ff5a36" class="light" />
-    <!-- banner on the keep -->
-    <path d="M240 40 v-14 h3 v11 l-1.5 3 -1.5 -3 Z" fill="#0d0a16" />
-    <path d="M243 26 h10 v8 l-5 3 -5 -3 Z" fill="#c23a1e" />
-  </svg>
-  <div class="fog fog-a"></div>
-  <div class="fog fog-b"></div>
+  <Scenes {scene} />
+  <div class="motes mode-{cfg.mode}">
+    {motes.map((m) => (
+      <span
+        class:list={['mote', { alt: m.alt }]}
+        style={`left: ${m.left}%; top: ${m.top}%; animation-delay: ${m.delay}s; --mote-color: ${m.alt ? cfg.moteAlt : cfg.mote}; --mote-dur: ${m.dur}s;`}
+      ></span>
+    ))}
+  </div>
+  <div class="mist"></div>
 </div>
 
 <div class="desktop-windows">
@@ -60,113 +71,192 @@
     pointer-events: none;
   }
 
+  /* ---------- sky: dithered bands, tinted per scene ---------- */
+  .sky {
+    position: absolute;
+    inset: 0;
+    background:
+      /* horizon glow */
+      linear-gradient(to top, var(--scene-horizon) 0%, transparent 34%),
+      /* tint veil */
+      linear-gradient(to bottom, var(--scene-tint) 0%, transparent 55%),
+      /* the kingdom's night gradient */
+      linear-gradient(to bottom, var(--night) 0%, var(--night-deep) 100%);
+  }
+
+  /* checkerboard dither edge between the bands (PSX blend) */
+  .sky::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(rgb(0 0 0 / 0.18) 0% 25%, transparent 0% 50%);
+    background-size: 4px 4px;
+    mask-image: linear-gradient(
+      to top,
+      transparent 60%,
+      rgb(0 0 0 / 0.55) 74%,
+      transparent 82%,
+      rgb(0 0 0 / 0.3) 90%,
+      transparent 96%
+    );
+  }
+
+  /* ---------- dense star field, three sizes, staggered twinkle ---------- */
   .stars {
     position: absolute;
     inset: 0;
   }
 
-  /* hand-scattered star field */
-  .stars::before {
+  .stars::before,
+  .stars::after {
     content: '';
     position: absolute;
     width: 2px;
     height: 2px;
     background: transparent;
+  }
+
+  .stars::before {
     box-shadow:
-      4vw 8vh 0 1px #f4ead0, 12vw 3vh 0 0 #f4ead0, 18vw 14vh 0 0 #cfc6b0,
-      26vw 6vh 0 1px #f4ead0, 33vw 18vh 0 0 #f4ead0, 40vw 4vh 0 0 #cfc6b0,
-      47vw 11vh 0 1px #f4ead0, 55vw 2vh 0 0 #f4ead0, 61vw 16vh 0 0 #cfc6b0,
-      68vw 7vh 0 1px #f4ead0, 75vw 13vh 0 0 #f4ead0, 82vw 5vh 0 0 #cfc6b0,
-      89vw 17vh 0 1px #f4ead0, 95vw 9vh 0 0 #f4ead0, 8vw 24vh 0 0 #cfc6b0,
-      22vw 28vh 0 1px #f4ead0, 37vw 26vh 0 0 #cfc6b0, 52vw 24vh 0 0 #f4ead0,
-      70vw 27vh 0 1px #f4ead0, 86vw 25vh 0 0 #cfc6b0, 15vw 36vh 0 0 #f4ead0,
-      44vw 34vh 0 1px #cfc6b0, 63vw 38vh 0 0 #f4ead0, 91vw 33vh 0 0 #f4ead0,
-      2vw 44vh 0 0 #cfc6b0, 29vw 46vh 0 1px #f4ead0, 58vw 44vh 0 0 #f4ead0,
-      78vw 47vh 0 0 #cfc6b0, 96vw 41vh 0 0 #f4ead0;
+      4vw 7vh 0 1px #f4ead0, 11vw 3vh 0 0 #cfc6b0, 17vw 13vh 0 1px #f4ead0,
+      24vw 5vh 0 0 #f4ead0, 31vw 17vh 0 0 #cfc6b0, 38vw 4vh 0 1px #f4ead0,
+      45vw 10vh 0 0 #f4ead0, 52vw 2vh 0 0 #cfc6b0, 58vw 15vh 0 1px #f4ead0,
+      65vw 6vh 0 0 #f4ead0, 72vw 12vh 0 0 #cfc6b0, 79vw 4vh 0 1px #f4ead0,
+      86vw 16vh 0 0 #f4ead0, 93vw 8vh 0 0 #cfc6b0, 97vw 3vh 0 1px #f4ead0,
+      7vw 22vh 0 0 #cfc6b0, 20vw 26vh 0 1px #f4ead0, 35vw 24vh 0 0 #f4ead0,
+      53vw 22vh 0 0 #cfc6b0, 71vw 25vh 0 1px #f4ead0, 88vw 21vh 0 0 #f4ead0,
+      2vw 32vh 0 0 #cfc6b0, 14vw 34vh 0 0 #f4ead0, 27vw 36vh 0 1px #f4ead0,
+      41vw 31vh 0 0 #cfc6b0, 60vw 34vh 0 0 #f4ead0, 76vw 33vh 0 0 #f4ead0,
+      95vw 30vh 0 0 #f4ead0, 9vw 42vh 0 1px #cfc6b0, 30vw 44vh 0 0 #f4ead0,
+      55vw 43vh 0 0 #f4ead0, 80vw 42vh 0 1px #f4ead0, 6vw 50vh 0 0 #cfc6b0,
+      44vw 49vh 0 0 #f4ead0, 68vw 48vh 0 0 #cfc6b0, 91vw 47vh 0 0 #f4ead0;
     animation: twinkle 5s steps(2, end) infinite;
+  }
+
+  .stars::after {
+    box-shadow:
+      8vw 10vh 0 0 #f4ead0, 22vw 8vh 0 1px #e8c558, 33vw 12vh 0 0 #f4ead0,
+      47vw 7vh 0 0 #e8c558, 61vw 11vh 0 1px #f4ead0, 74vw 9vh 0 0 #f4ead0,
+      89vw 14vh 0 0 #e8c558, 15vw 18vh 0 0 #f4ead0, 39vw 20vh 0 1px #e8c558,
+      58vw 19vh 0 0 #f4ead0, 83vw 18vh 0 0 #e8c558, 5vw 28vh 0 1px #f4ead0,
+      25vw 30vh 0 0 #e8c558, 49vw 27vh 0 0 #f4ead0, 66vw 29vh 0 1px #e8c558,
+      12vw 38vh 0 0 #f4ead0, 36vw 40vh 0 0 #e8c558, 57vw 38vh 0 0 #f4ead0,
+      85vw 37vh 0 1px #e8c558, 20vw 46vh 0 0 #f4ead0, 63vw 45vh 0 0 #e8c558,
+      93vw 41vh 0 0 #f4ead0;
+    animation: twinkle 5s steps(2, end) infinite;
+    animation-delay: 2.5s;
   }
 
   @keyframes twinkle {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.55; }
+    50% { opacity: 0.5; }
   }
 
-  .moon {
+  /* ---------- signature motes ---------- */
+  .motes {
     position: absolute;
-    top: 7vh;
-    right: 9vw;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 30% 30%, transparent 0 8%, rgb(244 234 208 / 0.25) 8% 9%, transparent 9%),
-      radial-gradient(circle at 68% 60%, transparent 0 5%, rgb(244 234 208 / 0.2) 5% 6%, transparent 6%),
-      radial-gradient(circle at 35% 35%, #fbf4e0, #e8dcbc 65%, #d8c9a4 100%);
-    box-shadow:
-      0 0 40px 10px rgb(244 234 208 / 0.18),
-      0 0 120px 40px rgb(244 234 208 / 0.07);
+    inset: 0;
   }
 
-  .castle {
+  .mote {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(92vw, 860px);
-    height: auto;
-    opacity: 0.9;
+    width: 4px;
+    height: 4px;
+    background: var(--mote-color, #e8c558);
+    box-shadow: 0 0 8px 2px color-mix(in srgb, var(--mote-color, #e8c558) 60%, transparent);
+    opacity: 0;
+    animation-duration: var(--mote-dur, 7s);
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
   }
 
-  .light {
-    animation: flicker 3.5s steps(2, end) infinite;
+  .motes.mode-drift .mote {
+    animation-name: mote-drift;
   }
 
-  .light.slow {
-    animation-duration: 5.5s;
+  .motes.mode-rise .mote {
+    animation-name: mote-rise;
+    animation-timing-function: ease-in;
   }
 
-  @keyframes flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
+  .motes.mode-float .mote {
+    animation-name: mote-float;
   }
 
-  .fog {
+  @keyframes mote-drift {
+    0% { opacity: 0; transform: translate(0, 0); }
+    25% { opacity: 0.9; }
+    50% { transform: translate(10px, -8px); }
+    75% { opacity: 0.7; }
+    100% { opacity: 0; transform: translate(-8px, 6px); }
+  }
+
+  @keyframes mote-rise {
+    0% { opacity: 0; transform: translate(0, 0); }
+    15% { opacity: 0.9; }
+    100% { opacity: 0; transform: translate(6px, -46vh); }
+  }
+
+  @keyframes mote-float {
+    0% { opacity: 0; transform: translate(0, 0); }
+    30% { opacity: 0.8; }
+    100% { opacity: 0; transform: translate(-18px, 14px); }
+  }
+
+  /* ---------- ground mist with dithered top edge ---------- */
+  .mist {
     position: absolute;
     left: -10%;
+    bottom: 0;
     width: 120%;
-    height: 90px;
+    height: 110px;
     background: linear-gradient(
-      90deg,
-      transparent,
-      rgb(157 147 190 / 0.10) 20%,
-      rgb(157 147 190 / 0.16) 50%,
-      rgb(157 147 190 / 0.10) 80%,
+      to top,
+      rgb(157 147 190 / 0.16),
+      rgb(157 147 190 / 0.08) 60%,
       transparent
     );
-    filter: blur(6px);
+    filter: blur(4px);
+    animation: mistdrift 30s linear infinite alternate;
   }
 
-  .fog-a {
-    bottom: 12vh;
-    animation: drift 26s linear infinite alternate;
+  .mist::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(rgb(13 10 22 / 0.5) 0% 25%, transparent 0% 50%);
+    background-size: 3px 3px;
+    mask-image: linear-gradient(to top, transparent 30%, black 75%, transparent 100%);
   }
 
-  .fog-b {
-    bottom: 3vh;
-    height: 60px;
-    opacity: 0.8;
-    animation: drift 34s linear infinite alternate-reverse;
-  }
-
-  @keyframes drift {
-    from { transform: translateX(-4%); }
-    to { transform: translateX(4%); }
+  @keyframes mistdrift {
+    from { transform: translateX(-3%); }
+    to { transform: translateX(3%); }
   }
 
   /* windows float above the wallpaper */
   .desktop-windows {
     position: relative;
     z-index: 1;
+  }
+
+  @media (min-width: 64rem) {
+    .desktop-windows {
+      min-height: calc(100vh - var(--statusbar-h));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stars::before,
+    .stars::after,
+    .mote,
+    .mist {
+      animation: none;
+    }
+
+    .mote {
+      opacity: 0.5;
+    }
   }
 </style>
 

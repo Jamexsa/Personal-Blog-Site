@@ -13,14 +13,15 @@ const posts = await getSortedPosts();
 const recent = posts.slice(0, 3);
 ---
 
-<BaseLayout title="Your Name" description="Game developer and artist of the realm — games, art, and the devlog grimoire.">
-  <Window title="Hail, Traveler — the keep of YOUR NAME" icon="castle" x={230} y={16} width={520} class="welcome grain-paper">
+<BaseLayout title="Your Name" scene="home" description="Game developer and artist of the realm — games, art, and the devlog grimoire.">
+  <Window title="Hail, Traveler — the keep of YOUR NAME" icon="castle" x={230} y={16} width={520} frame="classic" trim="moon" class="welcome grain-paper">
     <p class="kicker">game dev · artist · keeper of small weird worlds</p>
-    <h1 class="wordmark">Your Name</h1>
+    <h1 class="wordmark heading-moon-gold floaty">Your Name</h1>
     <p class="intro">
       I craft <span class="ember">small games</span> and paint the worlds they
-      live in. This keep holds my deeds, my art, and the grimoire where the
-      making of it all is written down.
+      live in. This keep holds my deeds, my art, and
+      <span class="hand">the grimoire</span> where the making of it all is
+      written down.
     </p>
     <div class="welcome-actions">
       <a class="pixel-btn" href="/games/"><PixelIcon name="shield" size={14} /> View my deeds</a>
@@ -79,9 +80,9 @@ const recent = posts.slice(0, 3);
 
   <Window title="Banners of the realm" icon="banner" x={875} y={430} width={215} class="banners">
     <div class="banner-row">
-      <Badge88 label="Made with Astro" field="#1d1733" charge="#e8c558" pattern="diaper" />
-      <Badge88 label="Game Dev" field="#c23a1e" charge="#f4ead0" pattern="paly" />
-      <Badge88 label="Est. 2026" field="#2a2118" charge="#7fe07f" pattern="plain" />
+      <span class="tilt-l"><Badge88 label="Made with Astro" field="#1d1733" charge="#e8c558" pattern="diaper" /></span>
+      <span class="tilt-r"><Badge88 label="Game Dev" field="#c23a1e" charge="#f4ead0" pattern="paly" /></span>
+      <span class="tilt-l"><Badge88 label="Est. 2026" field="#2a2118" charge="#7fe07f" pattern="plain" /></span>
     </div>
     <p class="ledger-note">best viewed by candlelight, 800×600</p>
   </Window>
@@ -106,9 +107,9 @@ const recent = posts.slice(0, 3);
   }
 
   .wordmark {
+    font-family: var(--font-display-lg);
     font-size: var(--text-display);
     margin: 0.2rem 0 0.4rem;
-    color: var(--ink);
   }
 
   .ember {

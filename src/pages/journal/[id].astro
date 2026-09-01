@@ -27,11 +27,11 @@ const { Content } = await render(entry);
 const { data } = entry;
 ---
 
-<BaseLayout title={data.title} description={`A diary page — ${data.title}`}>
-  <Window title={`Diary — ${data.title}`} icon="quill" x={230} y={16} width={640} class="diary-entry vined">
+<BaseLayout title={data.title} scene="journal" description={`A diary page — ${data.title}`}>
+  <Window title={`Diary — ${data.title}`} icon="quill" x={230} y={16} width={640} frame="arch" trim="azurite" class="diary-entry vined">
     <VineCorners />
     <Marginalia variant="drollery_sword_rabbit" top={11} />
-    <SectionBanner text="Diary" sub="the squire writes it all down" />
+    <SectionBanner text="Diary" sub="the squire writes it all down" wing="scriptorium" />
 
     <article class="dropcap">
       <header class="entry-header">

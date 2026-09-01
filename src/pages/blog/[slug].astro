@@ -24,8 +24,8 @@ const { Content } = await render(post);
 const minutes = readingTimeMinutes(post.body ?? '');
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
-  <Window title={`Grimoire — ${post.data.title}`} icon="tome" x={230} y={16} width={760} class="tome vined">
+<BaseLayout title={post.data.title} scene="blog" description={post.data.description}>
+  <Window title={`Grimoire — ${post.data.title}`} icon="tome" x={230} y={16} width={760} frame="arch" trim="azurite" class="tome vined">
     <VineCorners />
     <Marginalia top={9} />
     <article class="dropcap">
@@ -36,7 +36,7 @@ const minutes = readingTimeMinutes(post.body ?? '');
           <span aria-hidden="true">·</span>
           <span>{minutes} min read by candlelight</span>
         </p>
-        <h1>{post.data.title}</h1>
+        <h1 class="tome-title heading-moon-gold">{post.data.title}</h1>
         {post.data.description && <p class="lede">{post.data.description}</p>}
       </header>
 
@@ -87,7 +87,7 @@ const minutes = readingTimeMinutes(post.body ?? '');
     border: 1px solid var(--ink);
   }
 
-  .tome-header h1 {
+  .tome-title {
     font-size: var(--text-3xl);
     margin: 0.4rem 0 0.6rem;
     max-width: 26ch;
