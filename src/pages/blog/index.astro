@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
 import SectionBanner from '../../components/SectionBanner.astro';
 import PageFooter from '../../components/PageFooter.astro';
+import VineCorners from '../../components/VineCorners.astro';
 import BlogList from '../../components/BlogList.astro';
 import { getSortedPosts } from '../../lib/posts';
 
@@ -20,7 +21,8 @@ const atTheForge = games
 ---
 
 <BaseLayout title="Blog" description="The Grimoire — a devlog of game development, art studies, and process.">
-  <Window title="The Wizard's Grimoire — devlog" icon="tome" x={230} y={16} width={760} class="grimoire">
+  <Window title="The Wizard's Grimoire — devlog" icon="tome" x={230} y={16} width={760} class="grimoire vined">
+    <VineCorners />
     <SectionBanner text="Grimoire" sub="the devlog — where the making is written down" />
 
     <section class="about-grimoire" aria-label="About this grimoire">

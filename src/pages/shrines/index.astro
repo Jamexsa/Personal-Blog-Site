@@ -20,6 +20,7 @@ const sealed = shrines.filter(({ data }) => data.status === 'sealed');
     <SectionBanner
       text="Reliquary"
       sub="small temples for the things that shaped the realm"
+      frame="cartouche"
     />
 
     <p class="ui-label">
@@ -76,7 +77,36 @@ const sealed = shrines.filter(({ data }) => data.status === 'sealed');
                 </p>
                 <h2 class="shrine-title">{data.title}</h2>
                 <p class="shrine-blurb">{data.blurb}</p>
-                <p class="sealed-note">relics still being gathered — visit again, traveler</p>
+                <div class="construction" aria-hidden="true">
+                  <svg
+                    class="construction-scene"
+                    width="72"
+                    height="40"
+                    viewBox="0 0 18 10"
+                    shape-rendering="crispEdges"
+                  >
+                    <!-- scaffold frame -->
+                    <rect x="1" y="1" width="1" height="8" fill="#574733" />
+                    <rect x="1" y="1" width="11" height="1" fill="#574733" />
+                    <rect x="11" y="1" width="1" height="8" fill="#574733" />
+                    <rect x="1" y="4" width="11" height="1" fill="#574733" />
+                    <rect x="1" y="8" width="11" height="1" fill="#574733" />
+                    <!-- diagonal brace -->
+                    <rect x="3" y="2" width="1" height="1" fill="#a06a2a" />
+                    <rect x="4" y="3" width="1" height="1" fill="#a06a2a" />
+                    <rect x="5" y="4" width="1" height="1" fill="#a06a2a" />
+                    <!-- tiny worker on the platform -->
+                    <rect x="7" y="6" width="2" height="2" fill="#2a4d8f" />
+                    <rect x="7" y="5" width="2" height="1" fill="#e9d8a6" />
+                    <rect x="9" y="6" width="2" height="1" fill="#9b2335" />
+                    <!-- hammer spark -->
+                    <rect x="11" y="5" width="1" height="1" fill="#e8c558" />
+                    <!-- hanging lantern -->
+                    <rect x="13" y="2" width="1" height="1" fill="#574733" />
+                    <rect x="13" y="3" width="1" height="1" fill="#ff5a36" />
+                  </svg>
+                  <p class="construction-note">relics under construction — visit again, traveler</p>
+                </div>
               </div>
             </div>
           )
@@ -184,6 +214,33 @@ const sealed = shrines.filter(({ data }) => data.status === 'sealed');
     font-size: 0.85rem;
     color: var(--ink-soft);
     font-style: italic;
+  }
+
+  .construction {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 0.6rem;
+    padding: 0.5rem 0.6rem;
+    background: var(--parchment);
+    border: 2px dashed var(--bevel-dark);
+  }
+
+  .construction-scene {
+    flex: none;
+    image-rendering: pixelated;
+  }
+
+  .construction-note {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    animation: constructblink 2s steps(2, end) infinite;
+  }
+
+  @keyframes constructblink {
+    50% { opacity: 0.55; }
   }
 
   @media (min-width: 48rem) {

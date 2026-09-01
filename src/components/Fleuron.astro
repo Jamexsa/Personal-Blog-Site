@@ -1,0 +1,69 @@
+---
+/**
+ * Fleuron — the vintage-print divider. A pixel rosette between two
+ * double rules, echoing combinable printers' flowers.
+ */
+interface Props {
+  /** add small companion diamonds beside the rosette */
+  companions?: boolean;
+}
+
+const { companions = true } = Astro.props;
+---
+
+<div class="fleuron" role="separator" aria-hidden="true">
+  {companions && <span class="f-dot"></span>}
+  <svg
+    class="f-rosette"
+    width="18"
+    height="18"
+    viewBox="0 0 9 9"
+    shape-rendering="crispEdges"
+  >
+    <rect x="4" y="1" width="1" height="7" fill="#c9a227" />
+    <rect x="1" y="4" width="7" height="1" fill="#c9a227" />
+    <rect x="2" y="2" width="1" height="1" fill="#9b2335" />
+    <rect x="6" y="2" width="1" height="1" fill="#2a4d8f" />
+    <rect x="2" y="6" width="1" height="1" fill="#2a4d8f" />
+    <rect x="6" y="6" width="1" height="1" fill="#9b2335" />
+    <rect x="3" y="3" width="3" height="3" fill="#e8c558" />
+  </svg>
+  {companions && <span class="f-dot alt"></span>}
+</div>
+
+<style>
+  .fleuron {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-block: 0.9rem;
+  }
+
+  /* double rule flanking the rosette, like built-up fleuron borders */
+  .fleuron::before,
+  .fleuron::after {
+    content: '';
+    flex: 1;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    height: 4px;
+    opacity: 0.75;
+  }
+
+  .f-rosette {
+    image-rendering: pixelated;
+    flex: none;
+  }
+
+  .f-dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    background: var(--brazilwood);
+    transform: rotate(45deg);
+  }
+
+  .f-dot.alt {
+    background: var(--azurite);
+  }
+</style>

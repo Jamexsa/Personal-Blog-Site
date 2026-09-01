@@ -18,13 +18,19 @@ const steedSpecs = [
 ] as const;
 
 const shelf = [
-  { name: 'Godot', rune: 'forge' },
-  { name: 'Aseprite', rune: 'ink' },
-  { name: 'Krita', rune: 'ink' },
-  { name: 'BeepBox', rune: 'song' },
-  { name: 'Audacity', rune: 'song' },
-  { name: 'VS Code', rune: 'forge' },
-] as const satisfies readonly { name: string; rune: 'forge' | 'ink' | 'song' }[];
+  { name: 'Godot', rune: 'fire' },
+  { name: 'Aseprite', rune: 'water' },
+  { name: 'Krita', rune: 'water' },
+  { name: 'BeepBox', rune: 'air' },
+  { name: 'Audacity', rune: 'air' },
+  { name: 'VS Code', rune: 'fire' },
+] as const satisfies readonly { name: string; rune: 'fire' | 'water' | 'air' }[];
+
+const shelfGlyph = {
+  fire: 'alch_fire',
+  water: 'alch_water',
+  air: 'alch_air',
+} as const;
 
 const palette = [
   ['night', '#141021'],
@@ -42,10 +48,11 @@ const palette = [
   title="Workspace"
   description="The Workshop — the desk this realm is built on, plus a small pixel sketchpad to play with."
 >
-  <Window title="The Workshop — desk & tools" icon="hammer" x={230} y={16} width={760} class="workshop">
+  <Window title="The Workshop — desk & tools" icon="hammer" x={230} y={16} width={760} class="workshop ffix grain-paper">
     <SectionBanner
       text="Workshop"
       sub="where the keeps and games are actually hammered out"
+      dither
     />
 
     <section class="setup" aria-label="The desk">
@@ -64,7 +71,7 @@ const palette = [
       <ul class="shelf">
         {shelf.map(({ name, rune }) => (
           <li class="vial">
-            <span class="vial-stopper {rune}" aria-hidden="true"></span>
+            <PixelIcon name={shelfGlyph[rune]} size={12} />
             {name}
           </li>
         ))}
@@ -156,17 +163,6 @@ const palette = [
     border: 2px solid var(--ink);
     padding: 0.2rem 0.55rem;
   }
-
-  .vial-stopper {
-    width: 10px;
-    height: 10px;
-    flex: none;
-    border: 1px solid var(--ink);
-  }
-
-  .vial-stopper.forge { background: var(--ember); }
-  .vial-stopper.ink { background: var(--gold); }
-  .vial-stopper.song { background: var(--magic); }
 
   .scroll-divider.big {
     margin-block: 1.4rem;

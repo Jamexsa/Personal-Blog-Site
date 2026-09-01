@@ -4,6 +4,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
 import SectionBanner from '../../components/SectionBanner.astro';
 import PageFooter from '../../components/PageFooter.astro';
+import VineCorners from '../../components/VineCorners.astro';
+import Marginalia from '../../components/Marginalia.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 
 export async function getStaticPaths() {
@@ -26,10 +28,12 @@ const { data } = entry;
 ---
 
 <BaseLayout title={data.title} description={`A diary page — ${data.title}`}>
-  <Window title={`Diary — ${data.title}`} icon="quill" x={230} y={16} width={640} class="diary-entry">
+  <Window title={`Diary — ${data.title}`} icon="quill" x={230} y={16} width={640} class="diary-entry vined">
+    <VineCorners />
+    <Marginalia variant="drollery_sword_rabbit" top={11} />
     <SectionBanner text="Diary" sub="the squire writes it all down" />
 
-    <article>
+    <article class="dropcap">
       <header class="entry-header">
         <p class="entry-meta">
           <FormattedDate date={data.date} />

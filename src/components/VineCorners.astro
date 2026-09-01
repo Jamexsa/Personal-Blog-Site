@@ -1,0 +1,86 @@
+---
+/**
+ * Manuscript vine-scroll corners: pixel acanthus/ivy ornaments pinned to
+ * the four corners of the parent window body (.win-body is position:relative).
+ * Blue leaves + gold berries + green stems, the classic border palette.
+ */
+interface Props {
+  /** pixel size of each corner ornament */
+  size?: number;
+}
+
+const { size = 30 } = Astro.props;
+
+// 12×12 pixel design: a curling stem with leaves and gold berries.
+// Mirrored per corner via CSS transforms.
+const corners = [
+  { c: 'tl', t: '' },
+  { c: 'tr', t: 'scaleX(-1)' },
+  { c: 'bl', t: 'scaleY(-1)' },
+  { c: 'br', t: 'scale(-1, -1)' },
+] as const;
+
+const pixels: { x: number; y: number; fill: string }[] = [];
+const grid = [
+  'A.....B.....',
+  'AAA...BBB...',
+  'AAAAA.BBBBB.',
+  'GAAAAAAAAAB.',
+  '.GGAAAAAAB..',
+  '...GGAAAB...',
+  '..G..GGAB...',
+  '.G.GG..G....',
+  'G..B..G.....',
+  '...B.G......',
+  '..B..G......',
+  '......G.....',
+];
+const legend: Record<string, string> = {
+  A: '#2a4d8f', // azurite leaf mass
+  B: '#c9a227', // gold berry
+  G: '#4f7a52', // green stem
+};
+grid.forEach((row, y) => {
+  [...row].forEach((cell, x) => {
+    if (cell !== '.') pixels.push({ x, y, fill: legend[cell] });
+  });
+});
+---
+
+<div class="vine-corners" aria-hidden="true">
+  {corners.map(({ c, t }) => (
+    <svg
+      class={`vine vc-${c}`}
+      width={size}
+      height={size}
+      viewBox="0 0 12 12"
+      shape-rendering="crispEdges"
+      style={`transform: ${t}`}
+    >
+      {pixels.map((p) => (
+        <rect x={p.x} y={p.y} width="1" height="1" fill={p.fill} />
+      ))}
+    </svg>
+  ))}
+</div>
+
+<style>
+  .vine-corners {
+    position: absolute;
+    inset: 5px;
+    pointer-events: none;
+  }
+
+  .vine {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    image-rendering: pixelated;
+    opacity: 0.9;
+  }
+
+  .vc-tl { top: 0; left: 0; }
+  .vc-tr { top: 0; right: 0; }
+  .vc-bl { bottom: 0; left: 0; }
+  .vc-br { bottom: 0; right: 0; }
+</style>

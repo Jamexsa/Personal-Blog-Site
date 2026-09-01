@@ -20,8 +20,8 @@ const statusBanner: Record<string, { label: string; class: string }> = {
 ---
 
 <BaseLayout title="Games" description="Deeds of the Knight — released games, works at the forge, and prototypes.">
-  <Window title="Deeds of the Knight — games & experiments" icon="shield" x={230} y={16} width={760} class="deeds">
-    <SectionBanner text="Deeds" sub="the heralds' rolls — released, forged, and rumored" />
+  <Window title="Deeds of the Knight — games & experiments" icon="shield" x={230} y={16} width={760} class="deeds ffix grain-paper">
+    <SectionBanner text="Deeds" sub="the heralds' rolls — released, forged, and rumored" dither />
     <header class="deeds-header">
       <p class="ui-label">
         {games.length > 0

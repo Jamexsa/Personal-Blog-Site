@@ -3,23 +3,83 @@
  * Illuminated wordmark banner — the blackletter/gold answer to the
  * reference site's ransom-note section headers. Sits at the top of a
  * window body.
+ *
+ * frame="plain"     — the classic night band with pixel flourishes
+ * frame="cartouche" — scrolled side flourishes, like an antique map title
+ * dither            — checkerboard blend overlay (PSX era texture)
  */
 interface Props {
   text: string;
   sub?: string;
+  frame?: 'plain' | 'cartouche';
+  dither?: boolean;
 }
 
-const { text, sub } = Astro.props;
+const { text, sub, frame = 'plain', dither = false } = Astro.props;
+
+// 8×20 pixel scroll/volute for the cartouche sides (mirrored for the right).
+const scrollGrid = [
+  '...AAAA.',
+  '..AAAA..',
+  '.AABBAA.',
+  'AABBBBAA',
+  'AAB..BAA',
+  'AA.BB.AA',
+  '...BB...',
+  '..BBBB..',
+  '..BBBB..',
+  '...BB...',
+  '...BB...',
+  '...BB...',
+  '..BBBB..',
+  '..BBBB..',
+  '...BB...',
+  'AA.BB.AA',
+  'AAB..BAA',
+  'AABBBBAA',
+  '.AABBAA.',
+  '..AAAA..',
+];
+const scrollLegend: Record<string, string> = {
+  A: '#c9a227', // gold curl
+  B: '#9b2335', // brazilwood core
+};
+const scrollPixels: { x: number; y: number; fill: string }[] = [];
+scrollGrid.forEach((row, y) => {
+  [...row].forEach((cell, x) => {
+    if (cell !== '.') scrollPixels.push({ x, y, fill: scrollLegend[cell] });
+  });
+});
 ---
 
-<header class="section-banner">
-  <p class="banner-flourish" aria-hidden="true">✦ ✦ ✦</p>
-  <h1 class="banner-word">{text}</h1>
-  {sub && <p class="banner-sub">{sub}</p>}
+<header class:list={['section-banner', { cartouche: frame === 'cartouche', dither }]}>
+  {frame === 'cartouche' && (
+    <svg class="scroll left" width="16" height="40" viewBox="0 0 8 20" shape-rendering="crispEdges" aria-hidden="true">
+      {scrollPixels.map((p) => (
+        <rect x={p.x} y={p.y} width="1" height="1" fill={p.fill} />
+      ))}
+    </svg>
+  )}
+  <div class="banner-middle">
+    <p class="banner-flourish" aria-hidden="true">✦ ✦ ✦</p>
+    <h1 class="banner-word">{text}</h1>
+    {sub && <p class="banner-sub">{sub}</p>}
+  </div>
+  {frame === 'cartouche' && (
+    <svg class="scroll right" width="16" height="40" viewBox="0 0 8 20" shape-rendering="crispEdges" aria-hidden="true">
+      {scrollPixels.map((p) => (
+        <rect x={p.x} y={p.y} width="1" height="1" fill={p.fill} />
+      ))}
+    </svg>
+  )}
 </header>
 
 <style>
   .section-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     text-align: center;
     background:
       radial-gradient(circle at 12% 30%, rgb(232 197 88 / 0.08) 0 2px, transparent 3px),
@@ -31,6 +91,18 @@ const { text, sub } = Astro.props;
       inset 3px 3px 0 rgb(0 0 0 / 0.35);
     padding: 0.7rem 1rem 0.8rem;
     margin: 0 0 1.1rem;
+  }
+
+  /* PSX checkerboard blend overlay */
+  .section-banner.dither {
+    background-image:
+      repeating-conic-gradient(rgb(0 0 0 / 0.22) 0% 25%, transparent 0% 50%);
+    background-size: 4px 4px;
+  }
+
+  .banner-middle {
+    flex: 1;
+    min-width: 0;
   }
 
   .banner-flourish {
@@ -55,5 +127,15 @@ const { text, sub } = Astro.props;
     letter-spacing: 0.05em;
     color: var(--parchment);
     opacity: 0.85;
+  }
+
+  .scroll {
+    flex: none;
+    image-rendering: pixelated;
+    filter: drop-shadow(1px 1px 0 rgb(0 0 0 / 0.4));
+  }
+
+  .scroll.right {
+    transform: scaleX(-1);
   }
 </style>

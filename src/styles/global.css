@@ -23,6 +23,11 @@
   --magic: #7fe07f;            /* LCD / live-data text */
   --moon: #f4ead0;
 
+  /* illumination pigments (M7) — the expensive colors, used in small doses */
+  --azurite: #2a4d8f;          /* medieval blue (ground lapis/azurite) */
+  --brazilwood: #9b2335;       /* lake red, cooler than ember */
+  --verdigris: #4f7a52;        /* muted vine green */
+
   /* semantic */
   --color-bg: var(--night);
   --win-bg: var(--parchment);
@@ -275,6 +280,8 @@ body::before {
 
 .win-body {
   padding: 1rem 1.1rem 1.2rem;
+  /* anchor for illumination ornaments (vines, marginalia) */
+  position: relative;
 }
 
 @media (max-width: 40rem) {
@@ -352,6 +359,77 @@ body::before {
   border: 0;
   border-top: 2px dashed var(--bevel-dark);
   margin-block: 0.8rem;
+}
+
+/* ============================================================
+   M7 — The Illumination: four schools, shared utilities
+   ============================================================ */
+
+/* --- dither: checkerboard blend instead of smooth gradients (PSX) --- */
+.dither {
+  background-image:
+    repeating-conic-gradient(rgb(0 0 0 / 0.22) 0% 25%, transparent 0% 50%);
+  background-size: 4px 4px;
+}
+
+/* --- grain: subtle speckle inside window bodies --- */
+.grain-paper {
+  background-image:
+    repeating-conic-gradient(rgb(42 33 24 / 0.06) 0% 25%, transparent 0% 50%);
+  background-size: 3px 3px;
+}
+
+.grain-stone {
+  background-image:
+    repeating-conic-gradient(rgb(0 0 0 / 0.16) 0% 25%, transparent 0% 50%);
+  background-size: 4px 4px;
+}
+
+/* --- illuminated drop cap (lombard): apply to the article container --- */
+.dropcap .prose > p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.85;
+  padding: 0.1em 0.14em 0.06em;
+  margin: 0.06em 0.14em 0 0;
+  color: var(--moon);
+  background: linear-gradient(
+    135deg,
+    var(--azurite) 0 49.5%,
+    var(--brazilwood) 50.5% 100%
+  );
+  box-shadow:
+    0 0 0 2px var(--gold),
+    inset 2px 2px 0 rgb(255 250 230 / 0.25),
+    inset -2px -2px 0 rgb(0 0 0 / 0.3);
+}
+
+/* --- party plaque: azurite/brazilwood split, for heraldic accents --- */
+.plaque.party {
+  background: linear-gradient(
+    90deg,
+    var(--azurite) 0 49.5%,
+    var(--brazilwood) 50.5% 100%
+  );
+  color: var(--moon);
+  text-shadow: 1px 1px 0 rgb(0 0 0 / 0.4);
+}
+
+/* --- FFIX-flavor window frame: chunky double rule + inner line --- */
+@media (min-width: 0) {
+  .win.ffix {
+    border: 3px solid var(--ink);
+    box-shadow:
+      inset 0 0 0 3px var(--parchment-aged),
+      inset 0 0 0 5px var(--ink),
+      inset 6px 6px 0 rgb(0 0 0 / 0.22),
+      5px 5px 0 rgb(0 0 0 / 0.45);
+  }
+
+  .win.ffix .win-title {
+    border-bottom: 3px double var(--gold);
+  }
 }
 
 .text-muted {

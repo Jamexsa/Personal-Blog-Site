@@ -58,7 +58,7 @@ const bannerSnippet = `<a href="${bannerHref}"><img src="${bannerHref}banner-88x
   description="The Bard's tale — who I am, what I make, how this keep is built, and how to send a raven."
 >
   <Window title="The Bard's Tale — about the author" icon="lute" x={230} y={16} width={640} class="bard">
-    <SectionBanner text="The Bard" sub="the webmaster, the squire, and the knight are all the same person" />
+    <SectionBanner text="The Bard" sub="the webmaster, the squire, and the knight are all the same person" frame="cartouche" />
 
     <section class="bio" aria-label="About the author">
       <img
@@ -73,8 +73,8 @@ const bannerSnippet = `<a href="${bannerHref}"><img src="${bannerHref}banner-88x
       <div class="bio-text">
         <h1 class="bio-title">Hail, I'm Your Name.</h1>
         <ul class="plaque-row" aria-label="Identity plaques">
-          {identityPlaques.map((p) => (
-            <li class="plaque">{p}</li>
+          {identityPlaques.map((p, i) => (
+            <li class:list={['plaque', { party: i % 2 === 0 }]}>{p}</li>
           ))}
         </ul>
         <p>
@@ -323,6 +323,8 @@ const bannerSnippet = `<a href="${bannerHref}"><img src="${bannerHref}banner-88x
     font-family: var(--font-ui);
     font-size: 0.95rem;
     margin: 0;
+    padding-left: 0.3rem;
+    border-left: 3px solid var(--azurite);
   }
 
   .v-side.like {
@@ -333,6 +335,10 @@ const bannerSnippet = `<a href="${bannerHref}"><img src="${bannerHref}banner-88x
     color: var(--ink-soft);
     flex-direction: row-reverse;
     text-align: right;
+    padding-left: 0;
+    padding-right: 0.3rem;
+    border-left: 0;
+    border-right: 3px solid var(--brazilwood);
   }
 
   .v-side.dislike :global(.pixel-icon) {

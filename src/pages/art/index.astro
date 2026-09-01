@@ -12,8 +12,8 @@ const pieces = (await getCollection('art')).sort(
 ---
 
 <BaseLayout title="Art" description="The Jester's Gallery — illustrations, studies, and sketches of the realm.">
-  <Window title="The Jester's Gallery — art & studies" icon="jester" x={230} y={16} width={760} class="gallery">
-    <SectionBanner text="Gallery" sub="the jester hangs what the brush has wrought" />
+  <Window title="The Jester's Gallery — art & studies" icon="jester" x={230} y={16} width={760} class="gallery ffix grain-paper">
+    <SectionBanner text="Gallery" sub="the jester hangs what the brush has wrought" dither />
     <header class="gallery-header">
       <p class="ui-label">
         {pieces.length > 0

@@ -3,8 +3,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
 import SectionBanner from '../../components/SectionBanner.astro';
 import PageFooter from '../../components/PageFooter.astro';
+import Fleuron from '../../components/Fleuron.astro';
 import PixelIcon from '../../components/PixelIcon.astro';
 import { resourceGroups } from '../../data/resources';
+
+// Each stall flies its own alchemical sign.
+const stallGlyph: Record<string, Parameters<typeof PixelIcon>[0]['name']> = {
+  forge: 'alch_fire',
+  scriptorium: 'alch_earth',
+  alchemy: 'alch_mercury',
+  cartography: 'alch_air',
+  curiosities: 'alch_moon',
+};
 ---
 
 <BaseLayout
@@ -23,7 +33,7 @@ import { resourceGroups } from '../../data/resources';
     {resourceGroups.map((group) => (
       <section class="stall" aria-labelledby={`stall-${group.id}`}>
         <h2 class="stall-title" id={`stall-${group.id}`}>
-          <PixelIcon name="banner" size={16} />
+          <PixelIcon name={stallGlyph[group.id] ?? 'alch_sun'} size={16} />
           {group.title}
         </h2>
         <p class="stall-blurb">{group.blurb}</p>
@@ -47,6 +57,8 @@ import { resourceGroups } from '../../data/resources';
     <p class="credits ui-label">
       credit where due: every stall above was recommended by experience, not coin.
     </p>
+
+    <Fleuron />
 
     <PageFooter updated="1 Sep 2026" />
   </Window>

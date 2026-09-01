@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
 import SectionBanner from '../../components/SectionBanner.astro';
 import PageFooter from '../../components/PageFooter.astro';
+import VineCorners from '../../components/VineCorners.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 
 // Newest first; drafts hidden like the Grimoire does.
@@ -16,7 +17,8 @@ const entries = (await getCollection('journal', ({ data }) => !data.draft)).sort
   title="Journal"
   description="The Squire's Diary — small personal entries from life in and around the keep."
 >
-  <Window title="The Squire's Diary — personal journal" icon="quill" x={230} y={16} width={760} class="diary">
+  <Window title="The Squire's Diary — personal journal" icon="quill" x={230} y={16} width={760} class="diary vined">
+    <VineCorners />
     <SectionBanner
       text="Diary"
       sub="the devlog is for the work; this one is for the days"

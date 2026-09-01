@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
 import SectionBanner from '../../components/SectionBanner.astro';
 import PageFooter from '../../components/PageFooter.astro';
+import Fleuron from '../../components/Fleuron.astro';
 import PixelIcon from '../../components/PixelIcon.astro';
 import { stations, playlist, tunedStationId } from '../../data/radio';
 
@@ -83,10 +84,14 @@ const tuned = stations.find((s) => s.id === tunedStationId) ?? stations[0];
           ))}
         </ol>
 
+        <Fleuron />
+
         <p class="wax-note">
-          <span class="wax" aria-hidden="true">🔒</span>
-          the tower is silent until the bard returns — drop songs into
-          <code>public/radio/</code> and the seal will lift.
+          <PixelIcon name="alch_mercury" size={14} />
+          <span>
+            the tower is silent until the bard returns — drop songs into
+            <code>public/radio/</code> and the seal will lift.
+          </span>
         </p>
       </section>
     </div>
@@ -346,7 +351,7 @@ const tuned = stations.find((s) => s.id === tunedStationId) ?? stations[0];
 
   .wax-note {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
     margin-top: 0.9rem;
     font-family: var(--font-ui);

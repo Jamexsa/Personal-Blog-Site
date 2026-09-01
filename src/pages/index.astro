@@ -14,7 +14,7 @@ const recent = posts.slice(0, 3);
 ---
 
 <BaseLayout title="Your Name" description="Game developer and artist of the realm — games, art, and the devlog grimoire.">
-  <Window title="Hail, Traveler — the keep of YOUR NAME" icon="castle" x={230} y={16} width={520} class="welcome">
+  <Window title="Hail, Traveler — the keep of YOUR NAME" icon="castle" x={230} y={16} width={520} class="welcome grain-paper">
     <p class="kicker">game dev · artist · keeper of small weird worlds</p>
     <h1 class="wordmark">Your Name</h1>
     <p class="intro">
@@ -59,7 +59,7 @@ const recent = posts.slice(0, 3);
   </Window>
 
   <Window title="Chronicle — latest from the Grimoire" icon="tome" x={515} y={430} width={330} class="chronicle">
-    <p class="lcd announce">✦ KINGDOMOS v1.1 — THE NEW WINGS ARE OPEN ✦</p>
+    <p class="lcd announce dither">✦ KINGDOMOS v1.1 — THE NEW WINGS ARE OPEN ✦</p>
     {recent.length > 0 ? (
       <ul class="chronicle-list">
         {recent.map(({ id, data }, i) => (

@@ -2,6 +2,8 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Window from '../../components/Window.astro';
+import VineCorners from '../../components/VineCorners.astro';
+import Marginalia from '../../components/Marginalia.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { getSortedPosts, readingTimeMinutes } from '../../lib/posts';
 
@@ -23,8 +25,10 @@ const minutes = readingTimeMinutes(post.body ?? '');
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <Window title={`Grimoire — ${post.data.title}`} icon="tome" x={230} y={16} width={760} class="tome">
-    <article>
+  <Window title={`Grimoire — ${post.data.title}`} icon="tome" x={230} y={16} width={760} class="tome vined">
+    <VineCorners />
+    <Marginalia top={9} />
+    <article class="dropcap">
       <header class="tome-header">
         <p class="tome-meta">
           <FormattedDate date={post.data.pubDate} />

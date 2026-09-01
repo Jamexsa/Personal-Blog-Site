@@ -1,0 +1,46 @@
+---
+import PixelIcon from './PixelIcon.astro';
+
+/**
+ * Marginalia drolleries — tiny medieval margin creatures (our own pixel
+ * hand). Sits in the outer margin beside the window; hidden when there is
+ * no margin space (< 64rem). Variant chosen at build time unless pinned.
+ */
+interface Props {
+  variant?: 'drollery_snail_duel' | 'drollery_sword_rabbit' | 'drollery_bird';
+  /** vertical position within the window body, in rem */
+  top?: number;
+}
+
+const variants = [
+  'drollery_snail_duel',
+  'drollery_sword_rabbit',
+  'drollery_bird',
+] as const;
+
+const { variant = variants[Math.floor(Math.random() * variants.length)], top = 6 } =
+  Astro.props;
+---
+
+<div class="marginalia" style={`--marg-top: ${top}rem`} aria-hidden="true">
+  <PixelIcon name={variant} size={54} class="marginalia-sprite" />
+</div>
+
+<style>
+  .marginalia {
+    position: absolute;
+    top: var(--marg-top, 6rem);
+    right: -3.4rem;
+    width: 3rem;
+    display: flex;
+    justify-content: center;
+    filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 0.4));
+    opacity: 0.95;
+  }
+
+  @media (max-width: 64rem) {
+    .marginalia {
+      display: none;
+    }
+  }
+</style>
