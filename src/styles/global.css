@@ -8,11 +8,11 @@
   --night: #141021;            /* desktop sky (top) */
   --night-deep: #0d0a16;       /* desktop sky (bottom), silhouettes */
   --indigo: #1d1733;           /* title bars, stone panels' parent */
-  --parchment: #e9d8a6;        /* window bodies */
-  --parchment-aged: #d4bd85;   /* inset panels, plaques */
-  --parchment-shade: #c3ab79;  /* bevel shadow side */
+  --parchment: #eee0b8;        /* window bodies — bright for reading */
+  --parchment-aged: #d0b67e;   /* inset panels — clearly recessed from the body */
+  --parchment-shade: #bd9f66;  /* bevel shadow side */
   --ink: #2a2118;              /* text on parchment */
-  --ink-soft: #574733;         /* secondary text on parchment */
+  --ink-soft: #4e3e2b;         /* secondary text on parchment (>=5:1) */
   --stone: #4a4458;            /* secondary panels (stone variant) */
   --stone-dark: #37324a;
   --stone-edge: #5c5570;
@@ -57,7 +57,7 @@
   /* Layout */
   --desktop-pad: 1rem;
   --win-chrome: 26px;          /* title bar height */
-  --statusbar-h: 34px;
+  --statusbar-h: 38px;         /* the taskbar */
 
   /* Effects */
   --bevel-light: rgba(255, 250, 230, 0.55);
@@ -82,7 +82,7 @@ html {
 body {
   font-family: var(--font-body);
   font-size: var(--text-base);
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--win-text);
   background: linear-gradient(to bottom, var(--night) 0%, var(--night-deep) 100%);
   background-attachment: fixed;
@@ -227,6 +227,13 @@ body::before {
   width: 100%;
 }
 
+/* per-family body washes — no two wings share the same parchment */
+.win.classic { background: var(--parchment); }
+.win.arch    { background: color-mix(in srgb, var(--parchment) 94%, var(--azurite)); }
+.win.chamfer { background: color-mix(in srgb, var(--parchment) 93%, var(--stone)); }
+.win.scroll  { background: color-mix(in srgb, var(--parchment) 94%, var(--verdigris)); }
+.win.round   { background: color-mix(in srgb, var(--parchment) 94%, var(--brazilwood)); }
+
 .win.stone {
   background: var(--stone);
   color: var(--parchment);
@@ -240,17 +247,23 @@ body::before {
   color: var(--gold-bright);
 }
 
-/* absolute placement on the desktop (wide screens only) */
+/* absolute placement on the desktop (wide screens only) — windows AND the
+   tavern scroll share this via [data-x] */
 @media (min-width: 64rem) {
-  .win[data-x] {
+  [data-x] {
     position: absolute;
     left: var(--win-x, 15rem);
     top: var(--win-y, 1rem);
     width: var(--win-w, 30rem);
-    /* never let a placed window run past the viewport edge */
+    /* never let a placed element run past the viewport edge */
     max-width: calc(100vw - var(--win-x, 15rem) - 1rem);
     margin-block: 0;
   }
+}
+
+/* closed windows (hidden by the window manager) */
+.win[data-win-id].closed {
+  display: none;
 }
 
 .win.dragging {
@@ -266,7 +279,7 @@ body::before {
   gap: 0.5rem;
   min-height: var(--win-chrome);
   padding: 0.2rem 0.4rem 0.2rem 0.6rem;
-  background: linear-gradient(90deg, var(--indigo), #2b2350 70%, var(--indigo));
+  background: var(--title-grad, linear-gradient(90deg, var(--indigo), #2b2350 70%, var(--indigo)));
   border-bottom: 2px solid var(--ink);
   /* trim hairline under the title bar, tinted per window */
   box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--trim-color, var(--gold)) 55%, transparent);
@@ -277,6 +290,12 @@ body::before {
   cursor: grab;
   user-select: none;
 }
+
+/* trim colors tint the whole title bar, not just the hairline */
+.win[data-trim='azurite']    { --title-grad: linear-gradient(90deg, color-mix(in srgb, var(--indigo) 72%, var(--azurite)), var(--indigo) 75%); }
+.win[data-trim='verdigris']  { --title-grad: linear-gradient(90deg, color-mix(in srgb, var(--indigo) 72%, var(--verdigris)), var(--indigo) 75%); }
+.win[data-trim='brazilwood'] { --title-grad: linear-gradient(90deg, color-mix(in srgb, var(--indigo) 72%, var(--brazilwood)), var(--indigo) 75%); }
+.win[data-trim='moon']       { --title-grad: linear-gradient(90deg, color-mix(in srgb, var(--indigo) 72%, var(--moon)), var(--indigo) 75%); }
 
 .win.dragging .win-title {
   cursor: grabbing;

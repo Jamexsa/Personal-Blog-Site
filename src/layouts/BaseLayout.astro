@@ -57,5 +57,89 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </Desktop>
     <Marquee />
     <StatusBar />
+    <script>
+      // Window manager: build the taskbar's window buttons from exactly the
+      // windows this page has. The Tavern is pinned — its button rolls the
+      // scroll instead of closing it; every other window hides/shows, and
+      // the topmost window's button lights up.
+      const bar = document.getElementById('sb-windows');
+      const windows = [...document.querySelectorAll<HTMLElement>('[data-win-id]')];
+
+      const nextZ = () =>
+        Math.max(
+          10,
+          ...windows.map((w) => Number(w.style.zIndex) || 0)
+        ) + 1;
+
+      const setActive = (id: string | null) => {
+        bar?.querySelectorAll('button').forEach((b) => {
+          b.classList.toggle('active', b.dataset.winId === id && !b.classList.contains('closed'));
+        });
+      };
+
+      if (bar) {
+        for (const win of windows) {
+          const id = win.dataset.winId!;
+          const pinned = win.hasAttribute('data-pinned');
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.winId = id;
+          btn.textContent = win.dataset.shortTitle ?? id;
+          if (pinned) btn.classList.add('pinned');
+
+          btn.addEventListener('click', () => {
+            if (pinned) {
+              // the scroll never closes — it rolls
+              win.querySelector('[data-scroll-toggle]')?.dispatchEvent(new Event('click'));
+              setActive(id);
+              return;
+            }
+            if (win.classList.contains('closed')) {
+              win.classList.remove('closed');
+              btn.classList.remove('closed');
+              win.style.zIndex = String(nextZ());
+              setActive(id);
+            } else if (String(nextZ() - 1) !== win.style.zIndex) {
+              // open but not topmost — focus it first
+              win.style.zIndex = String(nextZ());
+              setActive(id);
+            } else {
+              // topmost — put it away
+              win.classList.add('closed');
+              btn.classList.add('closed');
+              const rest = windows.filter(
+                (w) => !w.classList.contains('closed') && w !== win
+              );
+              setActive(
+                rest.sort(
+                  (a, b) => (Number(b.style.zIndex) || 0) - (Number(a.style.zIndex) || 0)
+                )[0]?.dataset.winId ?? null
+              );
+            }
+          });
+
+          bar.appendChild(btn);
+
+          // focus tracking
+          win.addEventListener('pointerdown', () => {
+            if (win.classList.contains('closed')) return;
+            win.style.zIndex = String(nextZ());
+            setActive(id);
+          });
+
+          // the ember seal closes the window
+          win.querySelector('.close-seal')?.addEventListener('click', () => {
+            if (pinned) return;
+            win.classList.add('closed');
+            btn.classList.add('closed');
+            setActive(null);
+          });
+        }
+
+        // initial state: everything open, tallest window active
+        windows.forEach((w, i) => (w.style.zIndex = String(10 + i)));
+        setActive(windows[windows.length - 1]?.dataset.winId ?? null);
+      }
+    </script>
   </body>
 </html>

@@ -23,7 +23,7 @@ const host = data.url ? new URL(data.url).hostname.replace('www.', '') : '';
 ---
 
 <BaseLayout title={data.title} scene="shrines" description={data.blurb}>
-  <Window title={`Reliquary — ${data.title}`} icon="chest" x={230} y={16} width={680} frame="scroll" trim="verdigris" class="shrine-detail">
+  <Window title={`Reliquary — ${data.title}`} shortTitle="Shrine" icon="chest" x={230} y={16} width={680} frame="scroll" trim="verdigris" class="shrine-detail">
     <SectionBanner text={data.title} sub={`a shrine · ${data.medium}`} frame="cartouche" wing="wanderer" />
 
     {data.cover && (

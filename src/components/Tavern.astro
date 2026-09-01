@@ -1,8 +1,12 @@
 ---
-import Window from './Window.astro';
 import PixelIcon from './PixelIcon.astro';
 import { navGroups } from './nav-links';
 
+/**
+ * The Tavern — the realm's one permanent fixture: a precious hanging
+ * parchment scroll. Pinned (never closable), still draggable by its
+ * wooden dowel, and it truly rolls open and closed by its wax seal.
+ */
 type IconName = Parameters<typeof PixelIcon>[0]['name'];
 const sectionIcons: Record<string, IconName> = {
   '/': 'castle',
@@ -40,38 +44,199 @@ const currentKey =
   ) ?? '/';
 ---
 
-<Window title="The Tavern" icon="banner" variant="stone" x={16} y={16} width={190} class="tavern">
-  <nav aria-label="Sections of the realm">
-    {navGroups.map(({ label, items }) => (
-      <section class="tavern-group">
-        <p class="tavern-group-label">{label}</p>
-        <ul>
-          {items.map(({ label: itemLabel, href }) => {
-            const isActive =
-              href === '/' ? currentPath === '/' : currentPath.startsWith(sectionPath(href));
-            return (
-              <li>
-                <a href={href} class:list={{ active: isActive }} aria-current={isActive ? 'page' : undefined}>
-                  <PixelIcon name={sectionIcons[href] ?? 'star'} size={14} />
-                  <span class="tavern-label">{itemLabel}</span>
-                  {isActive && <span class="here" aria-hidden="true">◄</span>}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-    ))}
-  </nav>
-  <p class="tavern-note">— {sectionTitles[currentKey]} —</p>
-</Window>
+<aside
+  class="tavern-scroll grain-paper"
+  data-x=""
+  data-win-id="tavern"
+  data-short-title="Tavern"
+  data-pinned=""
+  style="--win-x: 16px; --win-y: 16px; --win-w: 190px;"
+>
+  <div class="dowel top" data-drag-handle title="Drag the Tavern">
+    <span class="finial" aria-hidden="true"></span>
+    <span class="rod" aria-hidden="true"></span>
+    <span class="finial" aria-hidden="true"></span>
+  </div>
+
+  <button class="tag-row" type="button" data-scroll-toggle aria-expanded="true">
+    <PixelIcon name="banner" size={12} />
+    <span class="tag-text">The Tavern</span>
+    <span class="wax-seal" aria-hidden="true"></span>
+  </button>
+
+  <div class="scroll-paper">
+    <div class="paper-inner">
+      <nav aria-label="Sections of the realm">
+        {navGroups.map(({ label, items }) => (
+          <section class="tavern-group">
+            <p class="tavern-group-label">{label}</p>
+            <ul>
+              {items.map(({ label: itemLabel, href }) => {
+                const isActive =
+                  href === '/' ? currentPath === '/' : currentPath.startsWith(sectionPath(href));
+                return (
+                  <li>
+                    <a href={href} class:list={{ active: isActive }} aria-current={isActive ? 'page' : undefined}>
+                      <PixelIcon name={sectionIcons[href] ?? 'star'} size={14} />
+                      <span class="tavern-label">{itemLabel}</span>
+                      {isActive && <span class="here" aria-hidden="true">◄</span>}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
+      </nav>
+      <p class="tavern-note">— {sectionTitles[currentKey]} —</p>
+      <div class="dowel bottom" aria-hidden="true">
+        <span class="finial"></span>
+        <span class="rod"></span>
+        <span class="finial"></span>
+      </div>
+    </div>
+  </div>
+</aside>
 
 <style>
-  .tavern nav {
+  .tavern-scroll {
+    position: relative;
+    margin-block: 1rem;
+    width: 100%;
+    filter: drop-shadow(4px 4px 0 rgb(0 0 0 / 0.4));
+  }
+
+  /* ---------- dowels: wooden rods with gold finials ---------- */
+  .dowel {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 6px;
+    height: 12px;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .dowel.top {
+    touch-action: none;
+  }
+
+  .dowel:active {
+    cursor: grabbing;
+  }
+
+  .finial {
+    flex: none;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gold-bright), var(--gold) 60%, #8a6d15);
+    border: 1px solid var(--ink);
+  }
+
+  .rod {
+    flex: 1;
+    height: 8px;
+    margin: 0 -2px;
+    background: linear-gradient(to bottom, #b5793a, #8a5a24 60%, #6e4619);
+    border-top: 1px solid rgb(255 250 230 / 0.35);
+    border-bottom: 1px solid rgb(0 0 0 / 0.45);
+  }
+
+  .dowel.bottom {
+    margin-top: 0.6rem;
+    cursor: default;
+  }
+
+  /* ---------- header tag with the wax-seal toggle ---------- */
+  .tag-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: calc(100% - 14px);
+    margin: 4px auto 0;
+    padding: 3px 7px;
+    background: var(--parchment);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 var(--bevel-light), inset -2px -2px 0 var(--bevel-dark);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .tag-row:hover .tag-text {
+    color: var(--ember-deep);
+  }
+
+  .tag-text {
+    flex: 1;
+    text-align: left;
+  }
+
+  .wax-seal {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ff7a5a, var(--ember-deep) 70%);
+    border: 2px solid var(--ink);
+    box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.3);
+    transition: transform 150ms steps(2, end);
+  }
+
+  .tag-row:hover .wax-seal {
+    transform: scale(1.15);
+  }
+
+  /* ---------- the parchment itself ---------- */
+  .scroll-paper {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 450ms ease;
+  }
+
+  .tavern-scroll.rolled .scroll-paper {
+    grid-template-rows: 0fr;
+  }
+
+  .paper-inner {
+    overflow: hidden;
+    min-height: 0;
+    /* keep the sheet reachable by keyboard/reader only while open */
+    transition: visibility 0s 0s;
+  }
+
+  .tavern-scroll.rolled .paper-inner {
+    visibility: hidden;
+    transition: visibility 0s 450ms;
+  }
+
+  .paper-inner nav,
+  .tavern-note {
+    margin: 8px 7px 0;
+    padding: 8px 6px 4px;
+    background: var(--parchment);
+    border: 2px solid var(--ink);
+    border-top: 3px double var(--gold);
+    box-shadow:
+      inset 2px 2px 0 var(--bevel-light),
+      inset -2px -2px 0 var(--bevel-dark);
+  }
+
+  .tavern-note {
+    margin-top: 4px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--brazilwood);
+  }
+
+  .tavern-scroll nav {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: min(62vh, 34rem);
+    max-height: min(58vh, 30rem);
     overflow-y: auto;
     scrollbar-width: thin;
   }
@@ -82,7 +247,7 @@ const currentKey =
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--gold);
+    color: var(--brazilwood);
     margin: 0 0 3px;
     padding: 0 2px;
   }
@@ -101,36 +266,50 @@ const currentKey =
     align-items: center;
     gap: 8px;
     padding: 3px 5px;
-    color: var(--parchment);
+    color: var(--ink);
     text-decoration: none;
     font-family: var(--font-ui);
     font-size: 1rem;
     border: 2px solid transparent;
   }
 
-  .tavern a:hover {
-    color: var(--gold-bright);
-    border-color: var(--stone-edge);
-    background: var(--stone-dark);
+  .tavern-scroll a:hover {
+    color: var(--ember-deep);
+    border-color: var(--parchment-shade);
+    background: var(--parchment-aged);
   }
 
-  .tavern a.active {
-    color: var(--gold-bright);
-    background: var(--stone-dark);
+  .tavern-scroll a.active {
+    color: var(--ink);
+    background: var(--parchment-aged);
     border-color: var(--gold);
   }
 
-  .tavern .here {
+  .tavern-scroll .here {
     margin-left: auto;
-    color: var(--gold-bright);
+    color: var(--brazilwood);
     font-size: 0.8rem;
   }
 
-  .tavern-note {
-    margin-top: 10px;
-    text-align: center;
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    color: var(--gold);
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-paper {
+      transition: none;
+    }
   }
 </style>
+
+<script>
+  const scrollEl = document.querySelector<HTMLElement>('.tavern-scroll');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-scroll-toggle]');
+
+  const sync = () => {
+    const rolled = scrollEl?.classList.contains('rolled') ?? false;
+    toggle?.setAttribute('aria-expanded', String(!rolled));
+  };
+  sync();
+
+  toggle?.addEventListener('click', () => {
+    scrollEl?.classList.toggle('rolled');
+    sync();
+  });
+</script>

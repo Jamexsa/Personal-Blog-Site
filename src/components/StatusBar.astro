@@ -1,19 +1,52 @@
 ---
 import PixelIcon from './PixelIcon.astro';
 
+/**
+ * The taskbar. Left: the Keep button (always home). Middle: window buttons —
+ * populated by the window-manager script in BaseLayout with exactly the
+ * windows the current page has (Tavern pinned first, rolls instead of
+ * closing). Right: where-you-are LCD, guests, live clock.
+ */
 const year = new Date().getFullYear();
+
+// Where are we? (wing dot color + label)
+const wings: [prefix: string, label: string, dot: string][] = [
+  ['/', 'The Realm · Castle', '#e8c558'],
+  ['/blog', 'Scriptorium · Grimoire', '#7aa7ff'],
+  ['/journal', 'Scriptorium · Diary', '#7aa7ff'],
+  ['/games', 'Guildhall · Deeds', '#e8c558'],
+  ['/art', 'Guildhall · Gallery', '#e8c558'],
+  ['/workspace', 'Guildhall · Workshop', '#e8c558'],
+  ['/shrines', "Wanderer · Reliquary", '#7fd8c9'],
+  ['/radio', 'Wanderer · Radio', '#7fd8c9'],
+  ['/resources', 'Wanderer · Stock', '#7fd8c9'],
+  ['/guestbook', 'The Inn · Ledger', '#ff7a5a'],
+  ['/about', 'The Inn · The Bard', '#ff7a5a'],
+];
+
+const currentPath = Astro.url.pathname;
+const loc =
+  wings.find(([prefix]) => prefix !== '/' && currentPath.startsWith(prefix)) ??
+  wings[0];
 ---
 
 <footer class="statusbar">
-  <span class="sb-left">
+  <a class="sb-keep" href="/" title="Return to the Keep">
     <PixelIcon name="castle" size={14} />
-    <span class="sb-os">KingdomOS</span>
-    <span class="sb-ver">v1.0</span>
-  </span>
-  <span class="sb-right">
-    <span class="lcd sb-guests">GUESTS: 00427</span>
-    <span class="lcd sb-clock" id="sb-clock">--:--</span>
-  </span>
+    <span class="keep-text">The Keep</span>
+  </a>
+
+  <nav class="sb-windows" id="sb-windows" aria-label="Windows on this page"></nav>
+
+  <div class="sb-right">
+    <span class="lcd sb-loc" title="Where you are">
+      <span class="wing-dot" style={`background: ${loc[2]}`} aria-hidden="true"></span>
+      {loc[1]}
+    </span>
+    <span class="lcd sb-guests" title="Guests of the realm (placeholder counter)">GUESTS: 00427</span>
+    <span class="lcd sb-clock" id="sb-clock" title="The realm's hour">--:--</span>
+  </div>
+
   <span class="sb-copy visually-hidden">© {year}</span>
 </footer>
 
@@ -27,9 +60,8 @@ const year = new Date().getFullYear();
     height: var(--statusbar-h);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 0 10px;
+    gap: 8px;
+    padding: 0 8px;
     background: var(--stone-dark);
     border-top: 2px solid var(--stone-edge);
     box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.35);
@@ -38,25 +70,131 @@ const year = new Date().getFullYear();
     color: var(--parchment);
   }
 
-  .sb-left,
-  .sb-right {
+  /* the Keep button — a start button that always goes home */
+  .sb-keep {
+    flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-  }
-
-  .sb-os {
+    gap: 6px;
+    padding: 3px 9px;
+    background: var(--indigo);
+    border: 2px solid var(--ink);
+    box-shadow: inset 2px 2px 0 rgb(255 250 230 / 0.18), inset -2px -2px 0 rgb(0 0 0 / 0.4);
     color: var(--gold-bright);
+    text-decoration: none;
+    white-space: nowrap;
   }
 
-  .sb-ver {
+  .sb-keep:hover {
+    background: color-mix(in srgb, var(--indigo) 70%, var(--gold));
+    color: var(--moon);
+  }
+
+  /* window buttons — exactly the current page's windows */
+  .sb-windows {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .sb-windows::-webkit-scrollbar {
+    display: none;
+  }
+
+  .statusbar :global(.sb-win-btn) {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 170px;
+    padding: 3px 9px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--parchment);
+    background: var(--stone);
+    border: 2px solid var(--stone-edge);
+    box-shadow: inset 2px 2px 0 var(--stone-edge), inset -2px -2px 0 rgb(0 0 0 / 0.35);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .statusbar :global(.sb-win-btn::before) {
+    content: '▣';
+    font-size: 0.75rem;
+    color: var(--gold);
+  }
+
+  .statusbar :global(.sb-win-btn:hover) {
+    color: var(--gold-bright);
+    border-color: var(--gold);
+  }
+
+  /* open + topmost window */
+  .statusbar :global(.sb-win-btn.active) {
+    color: var(--gold-bright);
+    border-color: var(--gold);
+    background: var(--stone-dark);
+    box-shadow: inset 0 3px 0 var(--gold);
+  }
+
+  /* closed window — raised look, like a Win95 unpressed task button */
+  .statusbar :global(.sb-win-btn.closed) {
+    color: var(--stone-edge);
+    box-shadow: inset -2px -2px 0 var(--stone-edge), inset 2px 2px 0 rgb(0 0 0 / 0.35);
+  }
+
+  .statusbar :global(.sb-win-btn.closed::before) {
+    content: '▢';
     color: var(--stone-edge);
   }
 
+  /* the pinned Tavern button */
+  .statusbar :global(.sb-win-btn.pinned) {
+    border-color: var(--gold);
+  }
+
+  .sb-right {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   .sb-clock,
-  .sb-guests {
-    font-size: 0.9rem;
+  .sb-guests,
+  .sb-loc {
+    font-size: 0.85rem;
     padding: 1px 6px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .wing-dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border: 1px solid rgb(0 0 0 / 0.6);
+  }
+
+  @media (max-width: 55rem) {
+    .keep-text,
+    .sb-loc {
+      display: none;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .sb-guests {
+      display: none;
+    }
   }
 </style>
 

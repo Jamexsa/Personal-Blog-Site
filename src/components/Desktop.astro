@@ -261,43 +261,44 @@ const motes = Array.from({ length: cfg.count }, (_, i) => ({
 </style>
 
 <script>
-  // Drag wiring: any .win[data-x] can be moved by its title bar on wide
-  // screens; everything stacks and stays put below 1024px.
+  // Drag wiring: any placed element ([data-x] — windows AND the tavern
+  // scroll) can be moved by its drag handle on wide screens; everything
+  // stacks and stays put below 1024px.
   const area = document.querySelector('.desktop-windows');
 
   if (area) {
     const desktopQuery = matchMedia('(min-width: 64rem)');
     let topZ = 5;
 
-    const bringToFront = (win: HTMLElement) => {
-      win.style.zIndex = String(++topZ);
+    const bringToFront = (el: HTMLElement) => {
+      el.style.zIndex = String(++topZ);
     };
 
-    area.querySelectorAll<HTMLElement>('.win').forEach((win) => {
-      win.addEventListener('pointerdown', () => bringToFront(win));
+    area.querySelectorAll<HTMLElement>('[data-x]').forEach((el) => {
+      el.addEventListener('pointerdown', () => bringToFront(el));
 
-      const handle = win.querySelector<HTMLElement>('[data-drag-handle]');
+      const handle = el.querySelector<HTMLElement>('[data-drag-handle]');
       if (!handle) return;
 
       handle.addEventListener('pointerdown', (e) => {
         if (!desktopQuery.matches) return;
-        if ((e.target as HTMLElement).closest('.seal')) return;
+        if ((e.target as HTMLElement).closest('button')) return;
         if (e.button !== 0) return;
 
-        const rect = win.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
         const parent = area.getBoundingClientRect();
         const offX = e.clientX - rect.left;
         const offY = e.clientY - rect.top;
-        win.classList.add('dragging');
+        el.classList.add('dragging');
 
         const move = (ev: PointerEvent) => {
           const x = Math.min(Math.max(ev.clientX - parent.left - offX, 0), Math.max(parent.width - rect.width, 0));
           const y = Math.min(Math.max(ev.clientY - parent.top - offY, 0), Math.max(parent.height - 40, 0));
-          win.style.left = `${x}px`;
-          win.style.top = `${y}px`;
+          el.style.left = `${x}px`;
+          el.style.top = `${y}px`;
         };
         const up = () => {
-          win.classList.remove('dragging');
+          el.classList.remove('dragging');
           window.removeEventListener('pointermove', move);
           window.removeEventListener('pointerup', up);
         };

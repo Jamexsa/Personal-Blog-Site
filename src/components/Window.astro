@@ -6,6 +6,8 @@ type Trim = 'gold' | 'azurite' | 'verdigris' | 'brazilwood' | 'moon';
 
 interface Props {
   title: string;
+  /** short label for the taskbar button (defaults to the full title) */
+  shortTitle?: string;
   icon?: Parameters<typeof PixelIcon>[0]['name'];
   /** desktop placement (px) — only applies ≥1024px, stacked below */
   x?: number;
@@ -21,6 +23,7 @@ interface Props {
 
 const {
   title,
+  shortTitle,
   icon,
   x,
   y,
@@ -30,6 +33,8 @@ const {
   trim = 'gold',
   class: className = '',
 } = Astro.props;
+
+const winId = (shortTitle ?? title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 const style = [
   x !== undefined && `--win-x: ${x}px`,
@@ -46,14 +51,21 @@ const placed = x !== undefined ? 'placed' : '';
   class:list={['win', variant, frame, placed, className]}
   data-x={x ?? undefined}
   data-trim={trim}
+  data-win-id={winId}
+  data-short-title={shortTitle ?? title}
   {style}
 >
   <header class="win-title" data-drag-handle>
     {icon && <PixelIcon name={icon} size={16} />}
     <span class="win-title-text">{title}</span>
-    <span class="seals" aria-hidden="true">
-      <span class="seal"></span>
-      <span class="seal gold"></span>
+    <span class="seals" aria-hidden="false">
+      <button
+        class="seal close-seal"
+        type="button"
+        aria-label={`Close ${shortTitle ?? title}`}
+        title={`Close ${shortTitle ?? title}`}
+      ></button>
+      <span class="seal gold" aria-hidden="true"></span>
     </span>
   </header>
   <div class="win-body">
