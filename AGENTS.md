@@ -1,3 +1,11 @@
+## Git
+
+Always push to GitHub after committing — never leave commits stranded locally.
+
+- Remote: `https://github.com/Jamexsa/Personal-Blog-Site.git`, branch `main`
+- The Git Credential Manager login works for push; no token needed
+- Never write, log, or commit any auth token anywhere
+
 ## Development
 
 When starting the dev server, use background mode:
